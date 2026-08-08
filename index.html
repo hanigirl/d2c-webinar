@@ -56,6 +56,7 @@
       --pink-hot:      #ff2b75;
       --yellow:        #ffc937;
       --green:         #7bed52;
+      --red:           #ff383c;
       --text:          #ffffff;
       --muted:         rgba(255, 255, 255, 0.62);
       --faint:         rgba(255, 255, 255, 0.35);
@@ -182,22 +183,37 @@
       margin-bottom: 40px;
     }
 
-    /* 2 · kicker — highlighted, sets up the headline */
+    /* 2 · live indicator — the one deliberate spot of colour */
     .hero-kicker {
-      display: flex;
-      flex-direction: column;
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 11px;
       margin-bottom: 32px;
-      max-width: 52ch;
     }
 
     .hero-kicker .mark {
-      display: inline-block;
       font-size: 26px;
-      font-weight: 500;
-      line-height: 1.3;
-      color: var(--text);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--red);
+      letter-spacing: 0.01em;
+    }
+
+    .live-dot {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 12px rgba(255, 56, 60, 0.9);
+      animation: live-blink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes live-blink {
+      0%, 100% { opacity: 1;    transform: scale(1); }
+      50%      { opacity: 0.25; transform: scale(0.82); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .live-dot { animation: none; }
     }
 
     /* 3 · headline — the loudest thing on the page */
@@ -628,10 +644,10 @@
       ומבינים שרק לעצב בפיגמה זה כבר פשוט לא מספיק ב-2026…
     </p>
 
-    <!-- 2 · highlighted kicker -->
+    <!-- 2 · live indicator -->
     <p class="hero-kicker reveal">
-      <span class="mark">משדר לייב מיוחד למעצבי מוצר חושף</span>
-      <span class="mark">איך לעלות עם הקוד החי הראשון שלך תוך 60 דקות:</span>
+      <span class="live-dot" aria-hidden="true"></span>
+      <span class="mark">משדר לייב</span>
     </p>
 
     <!-- 3 · the headline -->

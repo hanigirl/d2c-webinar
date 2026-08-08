@@ -347,6 +347,7 @@
        TESTIMONIALS
     ═══════════════════════════════════════════════ */
     .ty-social { padding-block: 110px; }
+    .ty-social .wrap { max-width: 1180px; }
 
     .ty-social h2 {
       font-size: 52px;
@@ -357,33 +358,66 @@
       margin: 0 auto 56px;
     }
 
-    .quotes {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
+    /* ── Scrolling wall — web port of the Remotion testimonials video ──
+       Three columns scroll at different speeds and directions; the contrast
+       reads as depth. Masked top and bottom so cards fade rather than clip. */
+    .wall {
+      display: flex;
+      justify-content: center;
       gap: 20px;
+      height: 620px;
+      overflow: hidden;
       text-align: right;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 13%, #000 87%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, #000 13%, #000 87%, transparent 100%);
+    }
+
+    .wall-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex: 1 1 0;
+      min-width: 0;
+      max-width: 340px;
+      animation: scroll-up linear infinite;
+      will-change: transform;
+    }
+
+    /* The list is duplicated in the markup, so translating by exactly -50%
+       lands on the identical card and the loop is seamless. */
+    @keyframes scroll-up {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-50%); }
+    }
+
+    .wall-col.is-reverse { animation-direction: reverse; }
+
+    .wall:hover .wall-col { animation-play-state: paused; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .wall {
+        height: auto;
+        -webkit-mask-image: none;
+        mask-image: none;
+      }
+      .wall-col { animation: none; }
+      /* Without motion the duplicate copy is just repetition — hide it. */
+      .wall-col > .quote:nth-child(n + 5) { display: none; }
     }
 
     .quote {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 32px 30px;
+      padding: 28px 26px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
-    }
-
-    .quote-mark {
-      font-family: 'Minecraft', monospace;
-      font-size: 30px;
-      color: var(--faint);
-      line-height: 1;
+      flex: none;
     }
 
     .quote p {
-      font-size: 23px;
-      line-height: 1.45;
+      font-size: 21px;
+      line-height: 1.55;
       color: rgba(255, 255, 255, 0.86);
     }
 
@@ -391,29 +425,29 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-top: auto;
-      padding-top: 4px;
+      margin-top: 22px;
     }
 
     .quote-avatar {
-      width: 44px; height: 44px;
+      width: 46px; height: 46px;
       border-radius: 50%;
-      background: var(--card-2);
-      display: grid;
-      place-items: center;
-      font-size: 20px;
-      color: var(--faint);
       flex-shrink: 0;
     }
 
     .quote-name {
-      font-size: 21px;
-      font-weight: 500;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.25;
     }
 
     .quote-role {
-      font-size: 18px;
+      font-size: 17px;
       color: var(--faint);
+      line-height: 1.25;
+      /* Roles mix Latin ("Lead UX") and Hebrew ("מעצב גרפי") — forcing either
+         direction reorders the other. */
+      unicode-bidi: plaintext;
+      text-align: right;
     }
 
     /* ═══════════════════════════════════════════════
@@ -510,7 +544,8 @@
       .ty-sub { font-size: 28px; }
       .ty-social h2 { font-size: 38px; }
       .ty-step h2 { font-size: 34px; }
-      .quotes { grid-template-columns: 1fr; }
+      .wall { height: 560px; }
+      .wall-col:nth-child(3) { display: none; }
     }
 
     @media (max-width: 600px) {
@@ -529,7 +564,11 @@
       .cd-num { font-size: 26px; }
       .ty-social { padding-block: 72px; }
       .ty-social h2 { font-size: 30px; margin-bottom: 36px; }
-      .quote p { font-size: 20px; }
+      .wall { height: 480px; gap: 14px; }
+      .wall-col { gap: 14px; }
+      .wall-col:nth-child(2) { display: none; }
+      .quote { padding: 22px 20px; }
+      .quote p { font-size: 19px; }
       .signoff-text { font-size: 24px; }
       .signoff-names { gap: 20px; }
       .signoff-person span { font-size: 22px; }
@@ -636,55 +675,253 @@
         אנחנו הולכים לפוצץ לכם את המוח — בדיוק כמו שהמשתתפים שלנו מעידים:
       </h2>
 
-      <!-- TODO · להחליף בעדויות אמיתיות (שם, תפקיד, ציטוט) -->
-      <div class="quotes">
-        <article class="quote reveal">
-          <span class="quote-mark" aria-hidden="true">&lt;&gt;</span>
-          <p>[ עדות 1 — ציטוט קצר וקונקרטי: מה השתנה אצלם בעבודה אחרי המפגש ]</p>
-          <footer>
-            <span class="quote-avatar" aria-hidden="true">?</span>
-            <span>
-              <span class="quote-name">[ שם מלא ]</span><br />
-              <span class="quote-role">[ תפקיד · חברה ]</span>
-            </span>
-          </footer>
-        </article>
-
-        <article class="quote reveal">
-          <span class="quote-mark" aria-hidden="true">&lt;&gt;</span>
-          <p>[ עדות 2 — ציטוט קצר וקונקרטי: מה השתנה אצלם בעבודה אחרי המפגש ]</p>
-          <footer>
-            <span class="quote-avatar" aria-hidden="true">?</span>
-            <span>
-              <span class="quote-name">[ שם מלא ]</span><br />
-              <span class="quote-role">[ תפקיד · חברה ]</span>
-            </span>
-          </footer>
-        </article>
-
-        <article class="quote reveal">
-          <span class="quote-mark" aria-hidden="true">&lt;&gt;</span>
-          <p>[ עדות 3 — ציטוט קצר וקונקרטי: מה השתנה אצלם בעבודה אחרי המפגש ]</p>
-          <footer>
-            <span class="quote-avatar" aria-hidden="true">?</span>
-            <span>
-              <span class="quote-name">[ שם מלא ]</span><br />
-              <span class="quote-role">[ תפקיד · חברה ]</span>
-            </span>
-          </footer>
-        </article>
-
-        <article class="quote reveal">
-          <span class="quote-mark" aria-hidden="true">&lt;&gt;</span>
-          <p>[ עדות 4 — ציטוט קצר וקונקרטי: מה השתנה אצלם בעבודה אחרי המפגש ]</p>
-          <footer>
-            <span class="quote-avatar" aria-hidden="true">?</span>
-            <span>
-              <span class="quote-name">[ שם מלא ]</span><br />
-              <span class="quote-role">[ תפקיד · חברה ]</span>
-            </span>
-          </footer>
-        </article>
+      <div class="wall reveal">
+        <div class="wall-col" style="animation-duration: 34s;">
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>הקורס הזה הוא באמת ⁨game changer⁩ בשבילי. הגעתי אליו כשאני קצת מכירה את עולם ה-⁨AI⁩, אבל באמת שלא דמיינתי כמה אפשרויות הכלי הזה יכול לתת לי.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/milka.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">מילכה לוין</span><br />
+                <span class="quote-role">Product Designer</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>הגעתי בלי לדעת לכתוב שורת קוד אחת ועם לא מעט חשש מעולמות הפיתוח, ויצאתי עם הרבה יותר ביטחון לפתוח ⁨Cursor⁩ או ⁨Claude Code⁩, לעבוד מול הקוד ולבנות רכיבים.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/yael-rosenberg.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">יעל רוזנברג</span><br />
+                <span class="quote-role">Lead UX</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>תודה רבה על סדנה מעמיקה ולא שגרתית שלא צפיתי שאני בכלל אקח. ממליץ בחפץ לב, כי הסדנה מאוד מעמיקה ונוגעת.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/yonatan.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">יונתן פורמן לפין</span><br />
+                <span class="quote-role">מעצב גרפי</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>קיבלתי המון ידע וכלים פרקטיים מהקורס. בימים אלו אני בונה מערכת לניהול הפרויקטים של הסטודיו לעיצוב שבו אני עובדת, וחד משמעית — בלי הקורס לא הייתי מגיעה לזה.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/tzipi-zaltz.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">ציפי זלץ</span><br />
+                <span class="quote-role">UI/UX Designer</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>הקורס הזה הוא באמת ⁨game changer⁩ בשבילי. הגעתי אליו כשאני קצת מכירה את עולם ה-⁨AI⁩, אבל באמת שלא דמיינתי כמה אפשרויות הכלי הזה יכול לתת לי.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/milka.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">מילכה לוין</span><br />
+                <span class="quote-role">Product Designer</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>הגעתי בלי לדעת לכתוב שורת קוד אחת ועם לא מעט חשש מעולמות הפיתוח, ויצאתי עם הרבה יותר ביטחון לפתוח ⁨Cursor⁩ או ⁨Claude Code⁩, לעבוד מול הקוד ולבנות רכיבים.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/yael-rosenberg.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">יעל רוזנברג</span><br />
+                <span class="quote-role">Lead UX</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>תודה רבה על סדנה מעמיקה ולא שגרתית שלא צפיתי שאני בכלל אקח. ממליץ בחפץ לב, כי הסדנה מאוד מעמיקה ונוגעת.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/yonatan.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">יונתן פורמן לפין</span><br />
+                <span class="quote-role">מעצב גרפי</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>קיבלתי המון ידע וכלים פרקטיים מהקורס. בימים אלו אני בונה מערכת לניהול הפרויקטים של הסטודיו לעיצוב שבו אני עובדת, וחד משמעית — בלי הקורס לא הייתי מגיעה לזה.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/tzipi-zaltz.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">ציפי זלץ</span><br />
+                <span class="quote-role">UI/UX Designer</span>
+              </span>
+            </footer>
+          </article>
+        </div>
+        <div class="wall-col is-reverse" style="animation-duration: 58s;">
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>היה ממש מעניין ומלמד, מרגישה שזו באמת רק ההתחלה. התחברתי ממש לדרך שלך, את מסבירה בצורה ברורה.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/yael-peled.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">יעל פלד</span><br />
+                <span class="quote-role">Product Designer</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>יצאתי עם ארגז כלים פרקטי ועם דחיפה אמיתית לשנות את הדרך שבה אני עובדת כמעצבת מוצר.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/yael-rosenberg.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">יעל רוזנברג</span><br />
+                <span class="quote-role">Lead UX</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>פתחתם לי את הראש, הרגתם לי את הפומו לחלוטין ועזרתם לי להרגיש בשליטה בתוך השינויים המטורפים שקורים פה ברמה היומיומית.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/milka.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">מילכה לוין</span><br />
+                <span class="quote-role">Product Designer</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="ltr" style="text-align: left;">
+            <p>Thanks for everything Hani &amp; Daniel. I enjoyed the practical knowledge and down to earth approach. 🙏</p>
+            <footer>
+              <img class="quote-avatar" src="assets/liber.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">Liber May</span><br />
+                <span class="quote-role">UI/UX Designer</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>היה ממש מעניין ומלמד, מרגישה שזו באמת רק ההתחלה. התחברתי ממש לדרך שלך, את מסבירה בצורה ברורה.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/yael-peled.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">יעל פלד</span><br />
+                <span class="quote-role">Product Designer</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>יצאתי עם ארגז כלים פרקטי ועם דחיפה אמיתית לשנות את הדרך שבה אני עובדת כמעצבת מוצר.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/yael-rosenberg.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">יעל רוזנברג</span><br />
+                <span class="quote-role">Lead UX</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>פתחתם לי את הראש, הרגתם לי את הפומו לחלוטין ועזרתם לי להרגיש בשליטה בתוך השינויים המטורפים שקורים פה ברמה היומיומית.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/milka.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">מילכה לוין</span><br />
+                <span class="quote-role">Product Designer</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="ltr" style="text-align: left;">
+            <p>Thanks for everything Hani &amp; Daniel. I enjoyed the practical knowledge and down to earth approach. 🙏</p>
+            <footer>
+              <img class="quote-avatar" src="assets/liber.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">Liber May</span><br />
+                <span class="quote-role">UI/UX Designer</span>
+              </span>
+            </footer>
+          </article>
+        </div>
+        <div class="wall-col" style="animation-duration: 40s;">
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>איזה קורס מדהים — חיכיתי למישהו שירים את הכפפה וילמד אותו, שאפו!</p>
+            <footer>
+              <img class="quote-avatar" src="assets/tzipi-levi.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">ציפי לוי</span><br />
+                <span class="quote-role">UI/UX Designer</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>אחרי הסדנה הצלחתי להקפיץ את העשייה שלי ואת ההספק שלי בעבודה ולחשוב על רעיונות שלא חשבתי עליהם, שגם עוזרים לי בחיים האישיים.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/yonatan.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">יונתן פורמן לפין</span><br />
+                <span class="quote-role">מעצב גרפי</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>היה מורגש כמה אכפת לכם שכל אחד יצליח. השילוב בין התיאוריה לתרגול בקבוצות קטנות היה מצוין.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/yael-rosenberg.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">יעל רוזנברג</span><br />
+                <span class="quote-role">Lead UX</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>תודה לכם על סדנא מעולה 🙏🙏🙏</p>
+            <footer>
+              <img class="quote-avatar" src="assets/sherry.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">שרי דודי</span><br />
+                <span class="quote-role">Product Designer</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>איזה קורס מדהים — חיכיתי למישהו שירים את הכפפה וילמד אותו, שאפו!</p>
+            <footer>
+              <img class="quote-avatar" src="assets/tzipi-levi.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">ציפי לוי</span><br />
+                <span class="quote-role">UI/UX Designer</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>אחרי הסדנה הצלחתי להקפיץ את העשייה שלי ואת ההספק שלי בעבודה ולחשוב על רעיונות שלא חשבתי עליהם, שגם עוזרים לי בחיים האישיים.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/yonatan.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">יונתן פורמן לפין</span><br />
+                <span class="quote-role">מעצב גרפי</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>היה מורגש כמה אכפת לכם שכל אחד יצליח. השילוב בין התיאוריה לתרגול בקבוצות קטנות היה מצוין.</p>
+            <footer>
+              <img class="quote-avatar" src="assets/yael-rosenberg.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">יעל רוזנברג</span><br />
+                <span class="quote-role">Lead UX</span>
+              </span>
+            </footer>
+          </article>
+          <article class="quote" dir="rtl" style="text-align: right;">
+            <p>תודה לכם על סדנא מעולה 🙏🙏🙏</p>
+            <footer>
+              <img class="quote-avatar" src="assets/sherry.svg" alt="" loading="lazy" />
+              <span>
+                <span class="quote-name">שרי דודי</span><br />
+                <span class="quote-role">Product Designer</span>
+              </span>
+            </footer>
+          </article>
+        </div>
       </div>
     </div>
   </section>
