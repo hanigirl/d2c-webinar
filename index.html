@@ -172,66 +172,68 @@
 
     .hero > * { position: relative; z-index: 1; }
 
-    .live-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--pink-hot);
-      color: #fff;
-      padding: 9px 22px 7px;
-      border-radius: 100px;
-      font-size: 22px;
-      font-weight: 500;
-      margin-bottom: 32px;
-      box-shadow: 0 12px 40px rgba(255, 43, 117, 0.30);
-    }
-
-    .live-dot {
-      width: 9px; height: 9px;
-      border-radius: 50%;
-      background: #fff;
-      animation: pulse 1.6s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1;   transform: scale(1); }
-      50%      { opacity: 0.35; transform: scale(0.8); }
-    }
-
-    @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
-
-    .hero-logo {
-      width: 460px;
-      max-width: 82%;
-      height: auto;
-      display: block;
-      margin-bottom: 36px;
-    }
-
-    h1.hero-title {
-      font-size: 68px;
-      font-weight: 700;
-      line-height: 1.04;
-      letter-spacing: -0.025em;
-      max-width: 20ch;
-      margin-bottom: 24px;
-    }
-
-    .hero-sub {
-      font-size: 30px;
-      color: var(--muted);
-      max-width: 44ch;
-      line-height: 1.35;
-      margin-bottom: 40px;
-    }
-
-    /* pre-headline: the FOMO qualifier lines */
+    /* 1 · qualifier — smallest, faintest: the "is this me?" filter */
     .hero-qualifier {
       font-size: 24px;
       color: var(--faint);
-      line-height: 1.45;
+      line-height: 1.5;
+      max-width: 58ch;
+      margin-bottom: 40px;
+    }
+
+    /* 2 · kicker — highlighted, sets up the headline */
+    .hero-kicker {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 32px;
       max-width: 52ch;
-      margin-bottom: 28px;
+    }
+
+    .hero-kicker .mark {
+      display: inline-block;
+      font-size: 26px;
+      font-weight: 500;
+      line-height: 1.25;
+      color: #0a0a0a;
+      background: var(--yellow);
+      padding: 5px 14px 3px;
+      border-radius: 4px;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    /* 3 · headline — the loudest thing on the page */
+    h1.hero-title {
+      font-size: 76px;
+      font-weight: 700;
+      line-height: 1.03;
+      letter-spacing: -0.03em;
+      max-width: 21ch;
+      margin-bottom: 36px;
+      text-wrap: balance;
+    }
+
+    /* 4 · promise paragraph */
+    .hero-sub {
+      font-size: 27px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.88);
+      max-width: 54ch;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    .hero-sub strong { color: var(--yellow); font-weight: 700; }
+
+    /* 5 · objection-killer */
+    .hero-tagline {
+      font-size: 24px;
+      color: var(--muted);
+      max-width: 48ch;
+      line-height: 1.4;
+      margin-bottom: 44px;
     }
 
     .hero-meta {
@@ -310,13 +312,6 @@
       max-width: 34ch;
       margin: 0 auto;
       text-align: center;
-    }
-
-    .promise p + p {
-      margin-top: 28px;
-      font-size: 26px;
-      color: var(--muted);
-      max-width: 46ch;
     }
 
     /* ═══════════════════════════════════════════════
@@ -591,27 +586,28 @@
     ═══════════════════════════════════════════════ */
     @media (max-width: 900px) {
       .learn-grid, .hosts-grid, .for-grid { grid-template-columns: 1fr; }
-      h1.hero-title { font-size: 48px; }
+      h1.hero-title { font-size: 52px; }
       h2.section-title { font-size: 48px; }
-      .hero-sub { font-size: 26px; }
+      .hero-sub { font-size: 24px; }
+      .hero-kicker .mark { font-size: 23px; }
+      .hero-qualifier, .hero-tagline { font-size: 22px; }
       .promise p { font-size: 28px; }
-      .promise p + p { font-size: 23px; }
       .section-pad { padding-block: 84px; }
     }
 
     @media (max-width: 600px) {
       .wrap { padding-inline: 20px; }
-      .hero { padding: 90px 20px 80px; min-height: auto; }
-      .hero-logo { width: 300px; margin-bottom: 28px; }
-      h1.hero-title { font-size: 38px; }
+      .hero { padding: 80px 20px 72px; min-height: auto; }
+      h1.hero-title { font-size: 40px; margin-bottom: 28px; }
       h2.section-title { font-size: 38px; }
-      .hero-qualifier { font-size: 21px; }
-      .hero-sub { font-size: 22px; }
+      .hero-qualifier { font-size: 20px; margin-bottom: 28px; }
+      .hero-kicker { margin-bottom: 24px; }
+      .hero-kicker .mark { font-size: 20px; }
+      .hero-sub { font-size: 21px; }
+      .hero-tagline { font-size: 20px; margin-bottom: 32px; }
       .section-lead { font-size: 23px; }
-      .live-badge { font-size: 19px; }
       .cta { font-size: 25px; padding: 14px 34px 11px; }
       .promise p { font-size: 24px; }
-      .promise p + p { font-size: 20px; }
       .learn-card { padding: 28px 24px 32px; }
       .learn-card h3 { font-size: 28px; }
       .learn-card p, .host p { font-size: 20px; }
@@ -629,25 +625,36 @@
 
   <!-- ═══════════════════ HERO ═══════════════════ -->
   <header class="hero">
-    <div class="live-badge reveal">
-      <span class="live-dot" aria-hidden="true"></span>
-      <span>משדר לייב מיוחד למעצבי מוצר</span>
-    </div>
-
-    <img class="hero-logo reveal" src="assets/logo-d2c.png" alt="Design to Code" />
-
+    <!-- 1 · qualifier — who this is for -->
     <p class="hero-qualifier reveal">
-      למעצבי מוצר ו-UI/UX שרואים איך ה-AI משנה את הכללים, מרגישים את ה-FOMO,
-      ומבינים שרק לעצב בפיגמה זה כבר פשוט <strong>לא מספיק ב-2026</strong>
+      למעצבי מוצר ו-UI/UX שרואים איך ה-AI משנה את הכללים,<br />
+      מרגישים את ה-FOMO,<br />
+      ומבינים שרק לעצב בפיגמה זה כבר פשוט לא מספיק ב-2026…
     </p>
 
+    <!-- 2 · highlighted kicker -->
+    <p class="hero-kicker reveal">
+      <span class="mark">משדר לייב מיוחד למעצבי מוצר חושף</span>
+      <span class="mark">איך לעלות עם הקוד החי הראשון שלך תוך 60 דקות:</span>
+    </p>
+
+    <!-- 3 · the headline -->
     <h1 class="hero-title reveal">
-      איך לעלות עם <span class="hl-yellow">הקוד החי הראשון שלך</span>
-      תוך <span class="hl-pink">60 דקות</span>
+      איך לפרוץ כ<span class="hl-yellow">"מעצב של העולם החדש"</span>,
+      להעלות קוד חי ראשון תוך <span class="hl-pink">60 דקות</span>,
+      ולהפוך לנכס הכי חזק בצוות
     </h1>
 
+    <!-- 4 · the promise -->
     <p class="hero-sub reveal">
-      איך לפרוץ כ"מעצב של העולם החדש", ולהפוך לנכס הכי חזק בצוות —
+      משדר לייב מיוחד שיחשוף איך לגייס את יכולות ה-AI שהופכים <strong>Figma לקוד עובד</strong>
+      בלחיצת כפתור, מכפילים לך את הספק בעבודה, גומרים את הפינג-פונג מול המפתחים,
+      ומאפשרים לך לשחרר גרסאות פיקסל-פרפקט ללייב במהירות שיא,
+      ולהפוך <strong>למעצב/ת בלתי ניתן להחלפה</strong> בצוות
+    </p>
+
+    <!-- 5 · the objection-killer -->
+    <p class="hero-tagline reveal">
       בלי להיות אדם טכני ובלי להתפשר על אף פיקסל.
     </p>
 
@@ -685,13 +692,10 @@
   <section class="promise">
     <div class="wrap">
       <p class="reveal">
-        נחשוף איך לגייס את יכולות ה-AI שהופכות <span class="hl-yellow">Figma לקוד עובד</span>
-        בלחיצת כפתור, מכפילות לך את הספק בעבודה, וגומרות את
-        <span class="hl-pink">הפינג-פונג מול המפתחים</span>.
-      </p>
-      <p class="reveal">
-        במשדר החי נחשוף את השיטה הפרקטית: איך לגייס את ה-AI בתור "מפתח הג'וניור" האישי שלך,
-        לשחרר גרסאות פיקסל-פרפקט ללייב במהירות שיא, ולהבטיח את המעמד המקצועי שלך בשוק משתגע.
+        במשדר החי נחשוף את השיטה הפרקטית: איך לגייס את ה-AI בתור
+        <span class="hl-yellow">"מפתח הג'וניור" האישי שלך</span>,
+        לסגור את <span class="hl-pink">הפינג-פונג מול הפרונט-אנד</span>,
+        ולהבטיח את המעמד המקצועי שלך בשוק משתגע.
       </p>
     </div>
   </section>
