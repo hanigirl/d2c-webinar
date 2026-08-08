@@ -220,11 +220,10 @@
     h1.hero-title {
       font-size: 56px;
       font-weight: 700;
-      line-height: 1.08;
+      line-height: 1.12;
       letter-spacing: -0.025em;
-      max-width: 30ch;
+      max-width: 100%;
       margin-bottom: 36px;
-      text-wrap: balance;
     }
 
     /* 4 · promise paragraph */
@@ -599,6 +598,7 @@
     @media (max-width: 900px) {
       .learn-grid, .hosts-grid, .for-grid { grid-template-columns: 1fr; }
       h1.hero-title { font-size: 44px; }
+      .wide-only { display: none; }
       h2.section-title { font-size: 40px; }
       .hero-sub { font-size: 24px; }
       .hero-kicker .mark { font-size: 23px; }
@@ -650,8 +650,8 @@
 
     <!-- 3 · the headline -->
     <h1 class="hero-title reveal">
-      איך לפרוץ כ<span class="hl-yellow">"מעצב של העולם החדש"</span>,
-      להעלות קוד חי ראשון תוך <span class="hl-pink">60 דקות</span>,
+      איך לפרוץ כמעצב של העולם החדש,<br class="wide-only" />
+      להעלות קוד חי ראשון תוך 60 דקות,<br class="wide-only" />
       ולהפוך לנכס הכי חזק בצוות
     </h1>
 
