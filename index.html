@@ -103,7 +103,7 @@
       font-size: 15px;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--pink);
+      color: var(--faint);
       margin-bottom: 20px;
       display: block;
     }
@@ -123,8 +123,9 @@
       line-height: 1.4;
     }
 
-    .hl-yellow { color: var(--yellow); }
-    .hl-pink   { color: var(--pink); }
+    /* Emphasis is weight-only — no colour in running text */
+    .hl-yellow,
+    .hl-pink { color: inherit; font-weight: 700; }
 
     /* ═══════════════════════════════════════════════
        REVEAL ANIMATION
@@ -195,13 +196,8 @@
       display: inline-block;
       font-size: 26px;
       font-weight: 500;
-      line-height: 1.25;
-      color: #0a0a0a;
-      background: var(--yellow);
-      padding: 5px 14px 3px;
-      border-radius: 4px;
-      box-decoration-break: clone;
-      -webkit-box-decoration-break: clone;
+      line-height: 1.3;
+      color: var(--text);
     }
 
     /* 3 · headline — the loudest thing on the page */
@@ -225,7 +221,7 @@
       margin-bottom: 20px;
     }
 
-    .hero-sub strong { color: var(--yellow); font-weight: 700; }
+    .hero-sub strong { color: inherit; font-weight: 700; }
 
     /* 5 · objection-killer */
     .hero-tagline {
@@ -343,7 +339,7 @@
     .learn-num {
       font-family: 'Minecraft', monospace;
       font-size: 34px;
-      color: var(--yellow);
+      color: var(--faint);
       line-height: 1;
     }
 
@@ -356,7 +352,7 @@
 
     .learn-tag {
       font-size: 20px;
-      color: var(--pink);
+      color: var(--faint);
     }
 
     .learn-card p {
@@ -447,7 +443,7 @@
 
     .host-role {
       font-size: 21px;
-      color: var(--yellow);
+      color: var(--muted);
       margin-top: 6px;
     }
 
@@ -853,8 +849,12 @@
         כדי להירשם להדרכה מלאו את הפרטים שלכם בטופס כאן למטה:
       </p>
 
-      <!-- TODO: להחליף את ה-action בכתובת של שירות ההרשמה (Grow / Mailchimp / Make webhook) -->
-      <form class="form-card reveal" action="#" method="post" novalidate>
+      <!--
+        TODO · להחליף את ה-action בכתובת של שירות ההרשמה (Grow / Mailchimp / Make webhook).
+        עד אז הטופס לא שולח לשום מקום — הוא רק מעביר לדף התודה כדי שאפשר יהיה לבדוק את הזרימה.
+      -->
+      <form class="form-card reveal" id="registerForm" action="" method="post"
+            data-redirect="thank-you.html" novalidate>
         <div class="field">
           <label for="fullname">שם מלא</label>
           <input type="text" id="fullname" name="fullname" placeholder="ישראל ישראלי"
@@ -896,6 +896,23 @@
   </div>
 
   <script>
+    // ── Registration form ──
+    // While `action` is empty the form has nowhere to post, so we just validate
+    // and send the user to the thank-you page. Once a real endpoint is set on
+    // `action`, the browser submits normally and this handler steps aside.
+    (function () {
+      var form = document.getElementById('registerForm');
+      if (!form) return;
+
+      form.addEventListener('submit', function (e) {
+        if (!form.reportValidity()) { e.preventDefault(); return; }
+        if (form.getAttribute('action')) return;   // real endpoint — let it post
+
+        e.preventDefault();
+        window.location.href = form.dataset.redirect;
+      });
+    })();
+
     // ── Scroll reveal ──
     (function () {
       var items = document.querySelectorAll('.reveal');
