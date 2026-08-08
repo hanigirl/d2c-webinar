@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>משדר לייב למעצבי מוצר — Design to Code</title>
+  <meta name="description" content="משדר לייב מיוחד למעצבי מוצר: איך לעלות עם הקוד החי הראשון שלך תוך 60 דקות, בלי להיות אדם טכני ובלי להתפשר על אף פיקסל." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="he_IL" />
+  <meta property="og:title" content="משדר לייב למעצבי מוצר — Design to Code" />
+  <meta property="og:description" content="איך לפרוץ כמעצב של העולם החדש, להעלות קוד חי ראשון תוך 60 דקות, ולהפוך לנכס הכי חזק בצוות." />
+  <meta property="og:image" content="assets/logo-d2c.png" />
+
+  <link rel="icon" href="assets/logo-d2c.png" />
+
+  <style>
+    /* ═══════════════════════════════════════════════
+       FONTS — from the Design to Code design system
+    ═══════════════════════════════════════════════ */
+    @font-face {
+      font-family: 'Minecraft';
+      src: url('fonts/1_MinecraftRegular1.otf') format('opentype');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Minecraft';
+      src: url('fonts/1_MinecraftRegular1.otf') format('opentype');
+      font-weight: 400; font-style: italic; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Almoni Tzar';
+      src: url('fonts/almoni-tzar-regular-aaa.otf') format('opentype');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Almoni Tzar';
+      src: url('fonts/almoni-tzar-medium-aaa.otf') format('opentype');
+      font-weight: 500; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Almoni Tzar';
+      src: url('fonts/almoni-tzar-bold-aaa.otf') format('opentype');
+      font-weight: 700; font-style: normal; font-display: swap;
+    }
+
+    /* ═══════════════════════════════════════════════
+       TOKENS
+    ═══════════════════════════════════════════════ */
+    :root {
+      --bg:            #000000;
+      --card:          #141414;
+      --card-2:        #1b1b1b;
+      --pink:          #ff2b9b;
+      --pink-hot:      #ff2b75;
+      --yellow:        #ffc937;
+      --green:         #7bed52;
+      --text:          #ffffff;
+      --muted:         rgba(255, 255, 255, 0.62);
+      --faint:         rgba(255, 255, 255, 0.35);
+      --border:        rgba(255, 255, 255, 0.10);
+      --radius:        20px;
+      --radius-sm:     12px;
+      --maxw:          1120px;
+      --ease:          cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Almoni Tzar', system-ui, sans-serif;
+      font-weight: 400;
+      direction: rtl;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.35;
+    }
+
+    ::selection { background: var(--pink); color: #fff; }
+
+    a { color: inherit; }
+
+    /* ═══════════════════════════════════════════════
+       LAYOUT
+    ═══════════════════════════════════════════════ */
+    .wrap {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding-inline: 32px;
+    }
+
+    section { position: relative; }
+
+    .section-pad { padding-block: 120px; }
+
+    .eyebrow {
+      font-family: 'Minecraft', monospace;
+      font-size: 15px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--pink);
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    h2.section-title {
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+
+    .section-lead {
+      font-size: 28px;
+      color: var(--muted);
+      max-width: 46ch;
+      line-height: 1.4;
+    }
+
+    .hl-yellow { color: var(--yellow); }
+    .hl-pink   { color: var(--pink); }
+
+    /* ═══════════════════════════════════════════════
+       REVEAL ANIMATION
+    ═══════════════════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    }
+    .reveal.is-in { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
+
+    /* ═══════════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════════ */
+    .hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 32px 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* soft pink/yellow glow behind the hero */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: -20% -10% auto -10%;
+      height: 90%;
+      background:
+        radial-gradient(60% 55% at 30% 20%, rgba(255, 43, 155, 0.20), transparent 70%),
+        radial-gradient(50% 50% at 75% 10%, rgba(255, 201, 55, 0.14), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(20px);
+    }
+
+    .hero > * { position: relative; z-index: 1; }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--pink-hot);
+      color: #fff;
+      padding: 9px 22px 7px;
+      border-radius: 100px;
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: 32px;
+      box-shadow: 0 12px 40px rgba(255, 43, 117, 0.30);
+    }
+
+    .live-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: #fff;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1;   transform: scale(1); }
+      50%      { opacity: 0.35; transform: scale(0.8); }
+    }
+
+    @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+
+    .hero-logo {
+      width: 460px;
+      max-width: 82%;
+      height: auto;
+      display: block;
+      margin-bottom: 36px;
+    }
+
+    h1.hero-title {
+      font-size: 68px;
+      font-weight: 700;
+      line-height: 1.04;
+      letter-spacing: -0.025em;
+      max-width: 20ch;
+      margin-bottom: 24px;
+    }
+
+    .hero-sub {
+      font-size: 30px;
+      color: var(--muted);
+      max-width: 44ch;
+      line-height: 1.35;
+      margin-bottom: 40px;
+    }
+
+    /* pre-headline: the FOMO qualifier lines */
+    .hero-qualifier {
+      font-size: 24px;
+      color: var(--faint);
+      line-height: 1.45;
+      max-width: 52ch;
+      margin-bottom: 28px;
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 36px;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 9px 20px 7px;
+      font-size: 21px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .meta-pill svg { flex-shrink: 0; opacity: 0.7; }
+
+    /* ═══════════════════════════════════════════════
+       CTA BUTTON
+    ═══════════════════════════════════════════════ */
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: var(--pink);
+      color: #fff;
+      font-family: 'Almoni Tzar', sans-serif;
+      font-size: 30px;
+      font-weight: 500;
+      padding: 16px 48px 13px;
+      border: none;
+      border-radius: 100px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s ease;
+      box-shadow: 0 14px 44px rgba(255, 43, 155, 0.32);
+    }
+
+    .cta:hover {
+      transform: translateY(-2px);
+      background: #ff45a8;
+      box-shadow: 0 18px 54px rgba(255, 43, 155, 0.45);
+    }
+
+    .cta:active { transform: translateY(0); }
+
+    .cta:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+
+    .cta-note {
+      display: block;
+      font-size: 20px;
+      color: var(--faint);
+      margin-top: 16px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       PROMISE STRIP
+    ═══════════════════════════════════════════════ */
+    .promise {
+      border-block: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      padding-block: 90px;
+    }
+
+    .promise p {
+      font-size: 34px;
+      line-height: 1.4;
+      max-width: 34ch;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .promise p + p {
+      margin-top: 28px;
+      font-size: 26px;
+      color: var(--muted);
+      max-width: 46ch;
+    }
+
+    /* ═══════════════════════════════════════════════
+       LEARN CARDS
+    ═══════════════════════════════════════════════ */
+    .learn-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+
+    .learn-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 32px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: border-color 0.3s ease, transform 0.3s var(--ease);
+    }
+
+    .learn-card:hover {
+      border-color: rgba(255, 43, 155, 0.45);
+      transform: translateY(-4px);
+    }
+
+    .learn-num {
+      font-family: 'Minecraft', monospace;
+      font-size: 34px;
+      color: var(--yellow);
+      line-height: 1;
+    }
+
+    .learn-card h3 {
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+    }
+
+    .learn-tag {
+      font-size: 20px;
+      color: var(--pink);
+    }
+
+    .learn-card p {
+      font-size: 23px;
+      color: var(--muted);
+      line-height: 1.42;
+    }
+
+    .learn-closer {
+      margin-top: 56px;
+      text-align: center;
+    }
+
+    .learn-closer p {
+      font-size: 38px;
+      font-weight: 700;
+      line-height: 1.2;
+      max-width: 24ch;
+      margin: 0 auto 32px;
+      letter-spacing: -0.02em;
+    }
+
+    /* ═══════════════════════════════════════════════
+       WHO IS IT FOR
+    ═══════════════════════════════════════════════ */
+    .for-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 48px;
+    }
+
+    .for-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      background: var(--card-2);
+      border-radius: var(--radius-sm);
+      padding: 24px 26px;
+      font-size: 24px;
+      line-height: 1.35;
+      color: rgba(255, 255, 255, 0.86);
+    }
+
+    .for-check {
+      flex-shrink: 0;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: rgba(123, 237, 82, 0.14);
+      display: grid;
+      place-items: center;
+      margin-top: 2px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       HOSTS
+    ═══════════════════════════════════════════════ */
+    .hosts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+
+    .host {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 32px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .host-photo {
+      width: 96px; height: 96px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--pink);
+    }
+
+    .host h3 {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .host-role {
+      font-size: 21px;
+      color: var(--yellow);
+      margin-top: 6px;
+    }
+
+    .host p {
+      font-size: 23px;
+      color: var(--muted);
+      line-height: 1.42;
+    }
+
+    .host-logos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 8px;
+    }
+
+    .host-logos span {
+      font-size: 18px;
+      color: var(--faint);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 14px 4px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       REGISTRATION FORM
+    ═══════════════════════════════════════════════ */
+    .register {
+      border-top: 1px solid var(--border);
+      background:
+        radial-gradient(70% 100% at 50% 0%, rgba(255, 43, 155, 0.14), transparent 70%);
+    }
+
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 48px 44px;
+      max-width: 620px;
+      margin: 48px auto 0;
+    }
+
+    .field { margin-bottom: 22px; }
+
+    .field label {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.86);
+    }
+
+    .field input {
+      width: 100%;
+      background: #0c0c0c;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 15px 18px 12px;
+      font-family: 'Almoni Tzar', sans-serif;
+      font-size: 24px;
+      color: var(--text);
+      transition: border-color 0.2s ease;
+    }
+
+    .field input::placeholder { color: rgba(255, 255, 255, 0.25); }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--pink);
+    }
+
+    .field input:invalid:not(:placeholder-shown) {
+      border-color: rgba(255, 56, 60, 0.7);
+    }
+
+    .form-card .cta { width: 100%; margin-top: 10px; }
+
+    .form-legal {
+      font-size: 18px;
+      color: var(--faint);
+      text-align: center;
+      margin-top: 18px;
+      line-height: 1.4;
+    }
+
+    /* ═══════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════ */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 44px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    footer img { height: 26px; width: auto; opacity: 0.75; }
+
+    footer p {
+      font-size: 18px;
+      color: var(--faint);
+      font-family: 'Minecraft', monospace;
+      letter-spacing: 0.06em;
+    }
+
+    /* ═══════════════════════════════════════════════
+       STICKY MOBILE CTA
+    ═══════════════════════════════════════════════ */
+    .sticky-cta {
+      position: fixed;
+      inset-inline: 0;
+      bottom: 0;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      display: none;
+      z-index: 50;
+      transform: translateY(110%);
+      transition: transform 0.35s var(--ease);
+    }
+
+    .sticky-cta.is-visible { transform: none; }
+
+    .sticky-cta .cta {
+      width: 100%;
+      font-size: 26px;
+      padding: 13px 24px 10px;
+      box-shadow: none;
+    }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .learn-grid, .hosts-grid, .for-grid { grid-template-columns: 1fr; }
+      h1.hero-title { font-size: 48px; }
+      h2.section-title { font-size: 48px; }
+      .hero-sub { font-size: 26px; }
+      .promise p { font-size: 28px; }
+      .promise p + p { font-size: 23px; }
+      .section-pad { padding-block: 84px; }
+    }
+
+    @media (max-width: 600px) {
+      .wrap { padding-inline: 20px; }
+      .hero { padding: 90px 20px 80px; min-height: auto; }
+      .hero-logo { width: 300px; margin-bottom: 28px; }
+      h1.hero-title { font-size: 38px; }
+      h2.section-title { font-size: 38px; }
+      .hero-qualifier { font-size: 21px; }
+      .hero-sub { font-size: 22px; }
+      .section-lead { font-size: 23px; }
+      .live-badge { font-size: 19px; }
+      .cta { font-size: 25px; padding: 14px 34px 11px; }
+      .promise p { font-size: 24px; }
+      .promise p + p { font-size: 20px; }
+      .learn-card { padding: 28px 24px 32px; }
+      .learn-card h3 { font-size: 28px; }
+      .learn-card p, .host p { font-size: 20px; }
+      .learn-closer p { font-size: 28px; }
+      .for-item { font-size: 21px; padding: 20px; }
+      .host h3 { font-size: 30px; }
+      .form-card { padding: 32px 24px; }
+      .field input { font-size: 21px; }
+      .sticky-cta { display: block; }
+      body { padding-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════ HERO ═══════════════════ -->
+  <header class="hero">
+    <div class="live-badge reveal">
+      <span class="live-dot" aria-hidden="true"></span>
+      <span>משדר לייב מיוחד למעצבי מוצר</span>
+    </div>
+
+    <img class="hero-logo reveal" src="assets/logo-d2c.png" alt="Design to Code" />
+
+    <p class="hero-qualifier reveal">
+      למעצבי מוצר ו-UI/UX שרואים איך ה-AI משנה את הכללים, מרגישים את ה-FOMO,
+      ומבינים שרק לעצב בפיגמה זה כבר פשוט <strong>לא מספיק ב-2026</strong>
+    </p>
+
+    <h1 class="hero-title reveal">
+      איך לעלות עם <span class="hl-yellow">הקוד החי הראשון שלך</span>
+      תוך <span class="hl-pink">60 דקות</span>
+    </h1>
+
+    <p class="hero-sub reveal">
+      איך לפרוץ כ"מעצב של העולם החדש", ולהפוך לנכס הכי חזק בצוות —
+      בלי להיות אדם טכני ובלי להתפשר על אף פיקסל.
+    </p>
+
+    <a class="cta reveal" href="#register">אני רוצה להירשם למשדר</a>
+    <span class="cta-note reveal">ההשתתפות ללא עלות · מספר המקומות מוגבל</span>
+
+    <div class="hero-meta reveal">
+      <span class="meta-pill">
+        <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="1.5" y="2.8" width="13" height="11.7" rx="2" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M1.5 6.3h13M5 1.5v2.6M11 1.5v2.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        <!-- TODO: תאריך המשדר -->
+        <span>יום ג׳ | 00.00</span>
+      </span>
+      <span class="meta-pill">
+        <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="8" cy="8" r="6.4" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M8 4.4V8l2.4 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        <!-- TODO: שעה + אורך -->
+        <span>20:00 | 60 דקות</span>
+      </span>
+      <span class="meta-pill">
+        <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="1.4" y="3.6" width="9.6" height="8.8" rx="2" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M11 7l3.6-2.2v6.4L11 9z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+        </svg>
+        <span>שידור חי בזום</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- ═══════════════════ PROMISE ═══════════════════ -->
+  <section class="promise">
+    <div class="wrap">
+      <p class="reveal">
+        נחשוף איך לגייס את יכולות ה-AI שהופכות <span class="hl-yellow">Figma לקוד עובד</span>
+        בלחיצת כפתור, מכפילות לך את הספק בעבודה, וגומרות את
+        <span class="hl-pink">הפינג-פונג מול המפתחים</span>.
+      </p>
+      <p class="reveal">
+        במשדר החי נחשוף את השיטה הפרקטית: איך לגייס את ה-AI בתור "מפתח הג'וניור" האישי שלך,
+        לשחרר גרסאות פיקסל-פרפקט ללייב במהירות שיא, ולהבטיח את המעמד המקצועי שלך בשוק משתגע.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ WHAT YOU'LL LEARN ═══════════════════ -->
+  <section class="section-pad">
+    <div class="wrap">
+      <span class="eyebrow reveal">The agenda</span>
+      <h2 class="section-title reveal">מה תלמדו במפגש?</h2>
+      <p class="section-lead reveal">שלושה שלבים — מהבנת הבעיה ועד מפת הדרכים המלאה.</p>
+
+      <div class="learn-grid">
+        <article class="learn-card reveal">
+          <span class="learn-num">01</span>
+          <h3>איך מעצבים באמת אמורים לעבוד עם AI?</h3>
+          <span class="learn-tag">הבעיה</span>
+          <p>
+            תבינו סוף סוף למה להיות מעצב פיגמה כבר לא מספיק ב-2026, מה החסמים שמונעים
+            מכם להתקדם מקצועית, ואיך כל זה קשור להזדמנות חדשה שלא הייתה קיימת קודם לכן.
+          </p>
+        </article>
+
+        <article class="learn-card reveal">
+          <span class="learn-num">02</span>
+          <h3>הפתרון שעובד מהשורש</h3>
+          <span class="learn-tag">השיטה</span>
+          <p>
+            תיחשפו לטכניקה פשוטה לחיסול הפומו, הדחיינות וחוסר הבהירות. תבינו בצורה ברורה
+            איך נכון לעבוד, ותשיגו הבנה עמוקה בשיטה שתהפוך אתכם פי 2 יעילים ומשפיעים יותר.
+          </p>
+        </article>
+
+        <article class="learn-card reveal">
+          <span class="learn-num">03</span>
+          <h3>מפת הדרכים המלאה</h3>
+          <span class="learn-tag">היישום</span>
+          <p>
+            תגלו איך באמת נראה תהליך העבודה החדש של מעצבים, ותראו יוז-קייס אמיתי מחברות
+            שאנחנו מלווים בשנתיים האחרונות — ומה גרם להן לאמץ את המתודות החדשות בארגון.
+          </p>
+        </article>
+      </div>
+
+      <div class="learn-closer">
+        <p class="reveal">זו ההזדמנות שלך להוביל כמעצב בתוך מהפכת ה-AI</p>
+        <a class="cta reveal" href="#register">לשמור לי מקום במשדר</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ WHO IS IT FOR ═══════════════════ -->
+  <section class="section-pad" style="background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);">
+    <div class="wrap">
+      <span class="eyebrow reveal">Who is it for</span>
+      <h2 class="section-title reveal">למי זה מתאים?</h2>
+      <p class="section-lead reveal">אם אחד מהמשפטים האלה מרגיש מוכר — המשדר הזה בשבילך.</p>
+
+      <div class="for-grid">
+        <div class="for-item reveal">
+          <span class="for-check" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          אם אתם נלחצים מכל חידוש, לא יודעים איפה להתחיל ומרגישים אבודים מרוב כלים.
+        </div>
+
+        <div class="for-item reveal">
+          <span class="for-check" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          אם אתם פותחים כל יום בחוסר אנרגיה או בתחושה שמשהו קורה ואתם נשארים מאחור.
+        </div>
+
+        <div class="for-item reveal">
+          <span class="for-check" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          אם אתם משתמשים ב-AI אבל לא ממש מבינים על מה כולם מדברים.
+        </div>
+
+        <div class="for-item reveal">
+          <span class="for-check" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          אם אתם פוחדים למצוא את עצמכם מחוץ לעניינים או להישאר לא רלוונטיים.
+        </div>
+
+        <div class="for-item reveal">
+          <span class="for-check" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          אם אתם רוצים להשיג שליטה ובהירות ולעבוד לפי שיטה מסודרת ומוכחת.
+        </div>
+
+        <div class="for-item reveal">
+          <span class="for-check" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          אם אין לכם זמן לבזבז על ניסיונות ואתם רוצים פרקטיקה ממוקדת שעושה שינוי בזמן קצר.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ HOSTS ═══════════════════ -->
+  <section class="section-pad">
+    <div class="wrap">
+      <span class="eyebrow reveal">Your hosts</span>
+      <h2 class="section-title reveal">מי אנחנו ולמה שתסמכו עלינו?</h2>
+
+      <div class="hosts-grid">
+        <article class="host reveal">
+          <img class="host-photo" src="assets/daniel.png" alt="דניאל בוארון" loading="lazy" />
+          <div>
+            <h3>דניאל בוארון</h3>
+            <div class="host-role">מייסד כנס designAI · טופ קריאטור בלינקדאין</div>
+          </div>
+          <p>
+            מוביל את תחום העיצוב וה-AI בארץ. חרש את הארץ בסדנאות לחברות ובפתרונות AI
+            מותאמים לארגונים.
+          </p>
+          <div class="host-logos">
+            <span>monday</span>
+            <span>fiverr</span>
+            <span>MyHeritage</span>
+            <span>ועוד</span>
+          </div>
+        </article>
+
+        <article class="host reveal">
+          <img class="host-photo" src="assets/hani-new.png" alt="חני בוסקילה" loading="lazy" />
+          <div>
+            <h3>חני בוסקילה</h3>
+            <div class="host-role">מעצבת מוצר ומפתחת · 15 שנות ניסיון</div>
+          </div>
+          <p>
+            שנים של ניסיון כמרצה ומנטורית בחוגים לעיצוב ובטכניון. בעלת קהילת המעצבים החדש
+            ובילדרית AI, מלווה בעלי עסקים וחברות ביצירת סוכני AI מותאמים לעסק.
+          </p>
+          <div class="host-logos">
+            <span>הטכניון</span>
+            <span>UXTRA</span>
+            <span>קהילת המעצבים החדש</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ REGISTRATION ═══════════════════ -->
+  <section class="register section-pad" id="register">
+    <div class="wrap" style="text-align: center;">
+      <span class="eyebrow reveal">Save your seat</span>
+      <h2 class="section-title reveal">הרשמה להדרכה</h2>
+      <p class="section-lead reveal" style="margin-inline: auto;">
+        כדי להירשם להדרכה מלאו את הפרטים שלכם בטופס כאן למטה:
+      </p>
+
+      <!-- TODO: להחליף את ה-action בכתובת של שירות ההרשמה (Grow / Mailchimp / Make webhook) -->
+      <form class="form-card reveal" action="#" method="post" novalidate>
+        <div class="field">
+          <label for="fullname">שם מלא</label>
+          <input type="text" id="fullname" name="fullname" placeholder="ישראל ישראלי"
+                 autocomplete="name" required />
+        </div>
+
+        <div class="field">
+          <label for="email">אימייל</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com"
+                 autocomplete="email" dir="ltr" style="text-align: right;" required />
+        </div>
+
+        <div class="field">
+          <label for="phone">טלפון</label>
+          <input type="tel" id="phone" name="phone" placeholder="050-0000000"
+                 autocomplete="tel" dir="ltr" style="text-align: right;"
+                 pattern="[0-9\-\+\s\(\)]{9,15}" required />
+        </div>
+
+        <button type="submit" class="cta">שריינו לי מקום במשדר</button>
+
+        <p class="form-legal">
+          ההשתתפות ללא עלות. הקישור למשדר יישלח למייל ובוואטסאפ לפני תחילת השידור.
+        </p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ FOOTER ═══════════════════ -->
+  <footer>
+    <img src="assets/uxtra-logo.svg" alt="UXTRA" />
+    <img src="assets/design-ai-logo.svg" alt="designAI" />
+    <p>DESIGN TO CODE &copy; 2026</p>
+  </footer>
+
+  <!-- ═══════════════════ STICKY MOBILE CTA ═══════════════════ -->
+  <div class="sticky-cta" id="stickyCta">
+    <a class="cta" href="#register">להירשם למשדר — חינם</a>
+  </div>
+
+  <script>
+    // ── Scroll reveal ──
+    (function () {
+      var items = document.querySelectorAll('.reveal');
+
+      if (!('IntersectionObserver' in window)) {
+        items.forEach(function (el) { el.classList.add('is-in'); });
+        return;
+      }
+
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          io.unobserve(entry.target);
+
+          // Stagger siblings inside the same grid/section
+          var siblings = Array.prototype.slice.call(
+            entry.target.parentNode.querySelectorAll(':scope > .reveal')
+          );
+          var i = siblings.indexOf(entry.target);
+          entry.target.style.transitionDelay = (i > 0 ? i * 0.08 : 0) + 's';
+          entry.target.classList.add('is-in');
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+
+      items.forEach(function (el) { io.observe(el); });
+    })();
+
+    // ── Sticky mobile CTA: show past the hero, hide over the form ──
+    (function () {
+      var sticky = document.getElementById('stickyCta');
+      var hero = document.querySelector('.hero');
+      var register = document.getElementById('register');
+      if (!sticky || !hero || !register) return;
+
+      function update() {
+        var heroPassed = hero.getBoundingClientRect().bottom < 0;
+        var formVisible = register.getBoundingClientRect().top < window.innerHeight * 0.85;
+        sticky.classList.toggle('is-visible', heroPassed && !formVisible);
+      }
+
+      update();
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+    })();
+  </script>
+
+</body>
+</html>
