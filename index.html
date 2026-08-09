@@ -187,23 +187,7 @@
       letter-spacing: 0.05em;
       max-width: 100%;
       margin-inline: auto;
-      margin-bottom: 40px;
-    }
-
-    /* 2 · live indicator — the one deliberate spot of colour */
-    .hero-kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .hero-kicker .mark {
-      font-size: 16px;
-      font-weight: 400;
-      line-height: 1;
-      color: var(--red);
-      letter-spacing: 0.05em;
+      margin-bottom: 18px;
     }
 
     .live-dot {
@@ -276,12 +260,24 @@
 
     .meta-pill svg { flex-shrink: 0; opacity: 0.7; }
 
-    /* Kicker + qualifier sit above the photo, not on it. */
-    .hero-top {
-      text-align: center;
-      padding: 52px 32px 0;
+    /* Full-bleed red strip announcing the broadcast. */
+    .live-strip {
+      background: var(--red);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 20px 11px;
+      font-size: 16px;
+      letter-spacing: 0.05em;
       position: relative;
-      z-index: 3;
+      z-index: 5;
+    }
+
+    .live-strip .live-dot {
+      background: #fff;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.85);
     }
 
     /* ═══════════════════════════════════════════════
@@ -289,7 +285,7 @@
        and a drifting pixel field
     ═══════════════════════════════════════════════ */
     .hero-visual {
-      padding: 20px 32px 0;
+      padding: 44px 32px 0;
       overflow: visible;
       position: relative;
       z-index: 1;
@@ -315,8 +311,7 @@
       mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
     }
 
-    /* Pink glow laid over the cutout. Screen blending makes it read as light
-       falling on them rather than a veil sitting in front of their faces. */
+    /* Rim glow behind the cutout so they don't float flat on the black. */
     .visual-stage::before {
       content: '';
       position: absolute;
@@ -326,11 +321,10 @@
       height: 88%;
       transform: translateX(-50%);
       background:
-        radial-gradient(50% 50% at 50% 45%, rgba(150, 90, 255, 0.30), transparent 72%),
-        radial-gradient(42% 44% at 62% 38%, rgba(255, 43, 155, 0.24), transparent 72%);
+        radial-gradient(50% 50% at 50% 45%, rgba(150, 90, 255, 0.28), transparent 72%),
+        radial-gradient(42% 44% at 62% 38%, rgba(255, 43, 155, 0.20), transparent 72%);
       filter: blur(30px);
-      mix-blend-mode: screen;
-      z-index: 3;
+      z-index: 0;
       pointer-events: none;
     }
 
@@ -391,8 +385,8 @@
     }
 
     @media (max-width: 600px) {
-      .hero-visual { padding: 12px 16px 0; }
-      .hero-top { padding: 34px 20px 0; }
+      .hero-visual { padding: 26px 16px 0; }
+      .live-strip { font-size: 15px; }
       .tile { width: 52px; height: 52px; border-radius: 15px; }
       .tile img, .tile svg { width: 26px; height: 26px; }
       .tile-1 { inset-inline-start: 0; }
@@ -742,7 +736,7 @@
       .hero { padding: 80px 20px 72px; min-height: auto; }
       h1.hero-title { font-size: 34px; margin-bottom: 28px; }
       h2.section-title { font-size: 31px; }
-      .hero-qualifier { margin-bottom: 28px; }
+      .hero-qualifier { margin-bottom: 12px; }
       .hero-sub { font-size: 21px; }
       .hero-tagline { font-size: 20px; margin-bottom: 32px; }
       .section-lead { font-size: 23px; }
@@ -763,16 +757,10 @@
 </head>
 <body>
 
-  <!-- ═══════════════════ HERO TOP ═══════════════════ -->
-  <header class="hero-top">
-    <p class="hero-kicker reveal">
-      <span class="live-dot" aria-hidden="true"></span>
-      <span class="mark">משדר לייב</span>
-    </p>
-
-    <p class="hero-qualifier reveal">
-      למעצבי דיגיטל שרואים איך ה-AI משנה את הכללים, ומבינים שרק לעצב בפיגמה זה כבר פשוט לא מספיק ב-2026…
-    </p>
+  <!-- ═══════════════════ LIVE STRIP ═══════════════════ -->
+  <header class="live-strip">
+    <span class="live-dot" aria-hidden="true"></span>
+    <span>הזמנה למשדר לייב</span>
   </header>
 
   <!-- ═══════════════════ HERO VISUAL ═══════════════════ -->
@@ -840,6 +828,11 @@
 
   <!-- ═══════════════════ HERO ═══════════════════ -->
   <section class="hero">
+    <!-- 2 · qualifier — sits right above the headline -->
+    <p class="hero-qualifier reveal">
+      למעצבי דיגיטל שרואים איך ה-AI משנה את הכללים, ומבינים שרק לעצב בפיגמה זה כבר פשוט לא מספיק ב-2026…
+    </p>
+
     <!-- 3 · the headline -->
     <h1 class="hero-title reveal">
       איך לפרוץ כמעצב של העולם החדש,<br class="wide-only" />
