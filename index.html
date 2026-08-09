@@ -527,9 +527,18 @@
        of the section. Matching the space above to the section's own bottom
        padding centres the pair in what's left instead of leaving it stranded
        under the cards. */
+    /* The sentence needs more scrolling than a single pass through the viewport
+       can give it, so it sticks in place inside a tall track and the writing is
+       driven by how far through that track you are. */
+    .closer-track {
+      position: relative;
+      height: 300vh;
+      margin-top: 100px;
+    }
+
     .learn-closer {
-      margin-top: 120px;
-      margin-bottom: 24px;
+      position: sticky;
+      top: 34vh;
       text-align: center;
     }
 
@@ -643,12 +652,16 @@
 
     .for-check {
       flex-shrink: 0;
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      background: rgba(123, 237, 82, 0.14);
-      display: grid;
-      place-items: center;
-      margin-top: 2px;
+      font-family: 'Minecraft', monospace;
+      font-size: 20px;
+      line-height: 1;
+      color: var(--pink);
+      margin-top: 6px;
+      /* The glyph is a bare '<' in the pixel face. Bidi mirrors bracket
+         characters in an RTL run, so it renders as '>' and points away from
+         the sentence; flipping it back aims it into the text, along the
+         reading direction. */
+      transform: scaleX(-1);
     }
 
     /* ═══════════════════════════════════════════════
@@ -850,7 +863,8 @@
       .learn-card { padding: 28px 24px 32px; }
       .learn-card h3 { font-size: 26px; }
       .learn-card p, .host p { font-size: 20px; }
-      .learn-closer { margin-top: 64px; margin-bottom: 8px; }
+      .closer-track { height: 200vh; margin-top: 56px; }
+      .learn-closer { top: 30vh; }
       .for-item { font-size: 21px; padding: 20px; }
       .host h3 { font-size: 27px; }
       .form-card { padding: 32px 24px; }
@@ -1043,9 +1057,11 @@
         </article>
       </div>
 
-      <div class="learn-closer">
-        <p class="type-line" data-type>זו ההזדמנות שלך להוביל כמעצב בתוך מהפכת ה-AI</p>
-        <a class="cta type-cta" href="#register">לשמור לי מקום במשדר</a>
+      <div class="closer-track">
+        <div class="learn-closer">
+          <p class="type-line" data-type>זו ההזדמנות שלך להוביל כמעצב בתוך מהפכת ה-AI</p>
+          <a class="cta type-cta" href="#register">לשמור לי מקום במשדר</a>
+        </div>
       </div>
     </div>
   </section>
@@ -1059,44 +1075,32 @@
 
       <div class="for-list">
         <div class="for-item">
-          <span class="for-check" aria-hidden="true">
-            <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
+          <span class="for-check" aria-hidden="true">&lt;</span>
           אם אתם נלחצים מכל חידוש, לא יודעים איפה להתחיל ומרגישים אבודים מרוב כלים.
         </div>
 
         <div class="for-item">
-          <span class="for-check" aria-hidden="true">
-            <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
+          <span class="for-check" aria-hidden="true">&lt;</span>
           אם אתם פותחים כל יום בחוסר אנרגיה או בתחושה שמשהו קורה ואתם נשארים מאחור.
         </div>
 
         <div class="for-item">
-          <span class="for-check" aria-hidden="true">
-            <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
+          <span class="for-check" aria-hidden="true">&lt;</span>
           אם אתם משתמשים ב-AI אבל לא ממש מבינים על מה כולם מדברים.
         </div>
 
         <div class="for-item">
-          <span class="for-check" aria-hidden="true">
-            <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
+          <span class="for-check" aria-hidden="true">&lt;</span>
           אם אתם פוחדים למצוא את עצמכם מחוץ לעניינים או להישאר לא רלוונטיים.
         </div>
 
         <div class="for-item">
-          <span class="for-check" aria-hidden="true">
-            <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
+          <span class="for-check" aria-hidden="true">&lt;</span>
           אם אתם רוצים להשיג שליטה ובהירות ולעבוד לפי שיטה מסודרת ומוכחת.
         </div>
 
         <div class="for-item">
-          <span class="for-check" aria-hidden="true">
-            <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
+          <span class="for-check" aria-hidden="true">&lt;</span>
           אם אין לכם זמן לבזבז על ניסיונות ואתם רוצים פרקטיקה ממוקדת שעושה שינוי בזמן קצר.
         </div>
       </div>
@@ -1511,17 +1515,22 @@
       var shown = -1;
       var queued = false;
 
+      var track = line.closest('.closer-track');
+
       function update() {
         queued = false;
-        var r = line.getBoundingClientRect();
         var vh = window.innerHeight;
 
-        // Type across the last third of the line's approach to the middle of
-        // the screen: it starts when the line is one third up from the bottom
-        // and completes a little above centre.
-        var from = vh * 1.02;
-        var to = vh * 0.24;
-        var p = (from - r.top) / (from - to);
+        // How far through the sticky track we are. Tying the progress to the
+        // track rather than to the line's own position is what lets the writing
+        // span far more scrolling than one pass across the viewport allows.
+        var t = track.getBoundingClientRect();
+        var range = t.height - vh;
+        var p = range > 0 ? -t.top / range : 0;
+
+        // Finish the sentence before the track runs out, so the button has a
+        // stretch of scroll to itself rather than appearing on the last pixel.
+        p = p / 0.76;
         p = p < 0 ? 0 : p > 1 ? 1 : p;
 
         var n = Math.round(p * chars.length);
