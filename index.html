@@ -1140,9 +1140,20 @@
       var EASE = 0.055;     // how fast the displacement unwinds
       var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+      // Silhouette edges, traced from the cutout's alpha channel and stored
+      // normalised so they survive any resize. Hani first, then Daniel.
+      var TEASER_PATHS = [
+        [[0.79,0.1597],[0.806,0.1812],[0.828,0.2038],[0.838,0.2265],[0.848,0.2491],[0.857,0.2718],[0.866,0.2932],[0.876,0.3159],[0.882,0.3385],[0.888,0.3611],[0.896,0.3838],[0.904,0.4052],[0.911,0.4279],[0.915,0.4505],[0.929,0.4732],[0.948,0.4958],[0.964,0.5173],[0.974,0.5399],[0.983,0.5626],[1,0.5852],[1,0.6079],[1,0.6293],[1,0.652],[1,0.6746],[1,0.6973],[1,0.7199]],
+        [[0.169,0.0989],[0.169,0.1228],[0.175,0.1478],[0.177,0.1728],[0.182,0.1979],[0.189,0.2229],[0.189,0.2479],[0.191,0.2718],[0.193,0.2968],[0.196,0.3218],[0.201,0.3468],[0.22,0.3719],[0.232,0.3969],[0.235,0.4207],[0.21,0.4458],[0.193,0.4708],[0.195,0.4958],[0.196,0.5209],[0.159,0.5459],[0.134,0.5697],[0.123,0.5948],[0.113,0.6198],[0.103,0.6448],[0.098,0.6698],[0.091,0.6949],[0.086,0.7199]]
+      ];
+      var TEASER_EVERY = 20000;   // ms between teasers
+      var TEASER_LEG = 2300;      // ms to walk one silhouette
+      var TEASER_GAP = 400;       // ms between the two
+
       var w = 0, h = 0, dpr = 1, sx = 1, sy = 1;
       var pointer = { x: 0, y: 0 };
       var power = 0, targetPower = 0, lastMove = 0, raf = null;
+      var touched = false, teaserRaf = null, teaserTimer = null;
 
       // Stable per-tile noise, so a given slab always moves the same way.
       function rnd(i) {
@@ -1233,12 +1244,61 @@
       function kick() { if (!raf) raf = requestAnimationFrame(tick); }
 
       function track(e) {
+        stopTeaser();
         var rect = wrap.getBoundingClientRect();
         var pt = e.touches ? e.touches[0] : e;
         pointer.x = pt.clientX - rect.left;
         pointer.y = pt.clientY - rect.top;
         lastMove = performance.now();
         if (!reduced) { targetPower = 1; kick(); }
+      }
+
+      // ── Teaser ──────────────────────────────────────────────────────────
+      // Nothing about this image says "touch me", so on a timer we drive the
+      // pointer along each silhouette ourselves. The moment the visitor moves
+      // over it for real we stop for good — once they've found it, a hand
+      // moving the effect on its own is just noise competing with theirs.
+      function stopTeaser() {
+        if (touched) return;
+        touched = true;
+        if (teaserRaf) cancelAnimationFrame(teaserRaf);
+        if (teaserTimer) clearInterval(teaserTimer);
+        teaserRaf = teaserTimer = null;
+      }
+
+      function walk(pts, done) {
+        var t0 = null;
+        (function step(ts) {
+          if (touched) return;
+          if (ts === undefined) { teaserRaf = requestAnimationFrame(step); return; }
+          if (t0 === null) t0 = ts;
+          var p = (ts - t0) / TEASER_LEG;
+          if (p >= 1) {
+            targetPower = 0; kick();
+            teaserRaf = null;
+            if (done) setTimeout(done, TEASER_GAP);
+            return;
+          }
+
+          // Ease in and out so it reads as a hand, not a machine.
+          var e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+          var at = e * (pts.length - 1);
+          var i = Math.min(pts.length - 2, Math.floor(at));
+          var f = at - i;
+
+          pointer.x = (pts[i][0] + (pts[i + 1][0] - pts[i][0]) * f) * w;
+          pointer.y = (pts[i][1] + (pts[i + 1][1] - pts[i][1]) * f) * h;
+          lastMove = ts;
+          targetPower = 1;
+          kick();
+
+          teaserRaf = requestAnimationFrame(step);
+        })();
+      }
+
+      function runTeaser() {
+        if (touched || reduced) return;
+        walk(TEASER_PATHS[0], function () { walk(TEASER_PATHS[1]); });
       }
 
       function release() { targetPower = 0; kick(); }
@@ -1252,6 +1312,10 @@
         wrap.addEventListener('mouseleave', release);
         wrap.addEventListener('touchmove', track, { passive: true });
         wrap.addEventListener('touchend', release);
+        wrap.addEventListener('touchstart', stopTeaser, { passive: true });
+
+        setTimeout(runTeaser, 1400);
+        teaserTimer = setInterval(runTeaser, TEASER_EVERY);
 
         var timer;
         window.addEventListener('resize', function () {
