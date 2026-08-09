@@ -1117,11 +1117,12 @@
   </div>
 
   <script>
-    // ── Hosts photo: the cursor pixelates what it passes over ──
+    // ── Hosts photo: the cursor shatters it into displaced blocks ──
     //
-    // The photo shows normally. A colour mosaic of it is painted on top, but
-    // only inside a mask the pointer stamps into. Once the pointer has been
-    // still for a moment the mask fades and the photo heals back.
+    // The shiftnudge.com treatment. The photo draws normally; near the pointer
+    // it is cut into tiles that get pushed radially outward, so the image
+    // breaks apart into slabs with black voids opening between them. The push
+    // eases back to nothing once the pointer has been still for a moment.
     (function () {
       var wrap = document.querySelector('.visual-photo-wrap');
       if (!wrap) return;
@@ -1131,24 +1132,21 @@
       var ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      var CELL = 14;        // mosaic tile, in CSS px
-      var RADIUS = 92;      // how far the pixelation spreads around the pointer
-      var HOLD = 1600;      // ms of stillness before it starts healing
-      var HEAL = 0.05;      // mask fade per frame once healing
+      var TILE = 13;        // slab size, in CSS px
+      var RADIUS = 155;     // how far the shatter reaches
+      var PUSH = 64;        // maximum displacement at the centre
+      var HOLD = 1200;      // ms of stillness before it settles back
+      var EASE = 0.055;     // how fast the displacement unwinds
       var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      var w = 0, h = 0, dpr = 1;
-      var mosaic, mask, pixels;
-      var pointer = { x: 0, y: 0, live: false };
-      var lastMove = 0, dirty = false, raf = null;
+      var w = 0, h = 0, dpr = 1, sx = 1, sy = 1;
+      var pointer = { x: 0, y: 0 };
+      var power = 0, targetPower = 0, lastMove = 0, raf = null;
 
-      function layer() {
-        var c = document.createElement('canvas');
-        c.width = Math.round(w * dpr);
-        c.height = Math.round(h * dpr);
-        var g = c.getContext('2d');
-        g.setTransform(dpr, 0, 0, dpr, 0, 0);
-        return { c: c, g: g };
+      // Stable per-tile noise, so a given slab always moves the same way.
+      function rnd(i) {
+        var v = Math.sin(i * 127.1 + 311.7) * 43758.5453;
+        return v - Math.floor(v);
       }
 
       function build() {
@@ -1161,72 +1159,71 @@
         canvas.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        mosaic = layer();
-        mask = layer();
-        pixels = layer();
-
-        // Mosaic keeps its colour — only the resolution drops.
-        var cols = Math.max(1, Math.round(w / CELL));
-        var rows = Math.max(1, Math.round(h / CELL));
-        var small = document.createElement('canvas');
-        small.width = cols; small.height = rows;
-        small.getContext('2d').drawImage(img, 0, 0, cols, rows);
-
-        var g = mosaic.g;
-        g.imageSmoothingEnabled = false;
-        g.mozImageSmoothingEnabled = false;
-        g.webkitImageSmoothingEnabled = false;
-        g.drawImage(small, 0, 0, w, h);
-
-        mask.g.clearRect(0, 0, w, h);
-        dirty = false;
+        // Source pixels per CSS pixel, for cutting tiles out of the original.
+        sx = img.naturalWidth / w;
+        sy = img.naturalHeight / h;
         return true;
       }
 
-      function compose() {
+      function draw() {
         ctx.clearRect(0, 0, w, h);
         ctx.drawImage(img, 0, 0, w, h);
 
-        if (dirty) {
-          pixels.g.clearRect(0, 0, w, h);
-          pixels.g.drawImage(mosaic.c, 0, 0, w, h);
-          pixels.g.globalCompositeOperation = 'destination-in';
-          pixels.g.drawImage(mask.c, 0, 0, w, h);
-          pixels.g.globalCompositeOperation = 'source-over';
-          ctx.drawImage(pixels.c, 0, 0, w, h);
-        }
-      }
+        if (power < 0.01) return;
 
-      function stamp() {
-        var grad = mask.g.createRadialGradient(
-          pointer.x, pointer.y, 0, pointer.x, pointer.y, RADIUS);
-        grad.addColorStop(0, 'rgba(0,0,0,1)');
-        grad.addColorStop(0.6, 'rgba(0,0,0,0.95)');
-        grad.addColorStop(1, 'rgba(0,0,0,0)');
-        mask.g.fillStyle = grad;
-        mask.g.beginPath();
-        mask.g.arc(pointer.x, pointer.y, RADIUS, 0, Math.PI * 2);
-        mask.g.fill();
-        dirty = true;
+        var R = RADIUS * power;
+        var x0 = Math.max(0, Math.floor((pointer.x - R) / TILE));
+        var x1 = Math.min(Math.ceil(w / TILE), Math.ceil((pointer.x + R) / TILE));
+        var y0 = Math.max(0, Math.floor((pointer.y - R) / TILE));
+        var y1 = Math.min(Math.ceil(h / TILE), Math.ceil((pointer.y + R) / TILE));
+
+        var moves = [];
+        var gx, gy, tx, ty, cx, cy, dx, dy, d, f, idx, ang, dist;
+
+        // Pass one: empty every tile the shatter touches, so voids open up.
+        for (gy = y0; gy < y1; gy++) {
+          for (gx = x0; gx < x1; gx++) {
+            tx = gx * TILE; ty = gy * TILE;
+            cx = tx + TILE / 2; cy = ty + TILE / 2;
+            dx = cx - pointer.x; dy = cy - pointer.y;
+            d = Math.sqrt(dx * dx + dy * dy);
+            if (d > R) continue;
+
+            f = 1 - d / R;
+            f = f * f;                       // bite hardest at the centre
+            idx = gy * 1000 + gx;
+
+            // Radial push, jittered per tile so the break looks torn, not
+            // geometric. Tiles right at the centre get thrown furthest.
+            ang = d < 0.001 ? rnd(idx) * 6.283 : Math.atan2(dy, dx);
+            ang += (rnd(idx + 7) - 0.5) * 0.7;
+            dist = f * PUSH * power * (0.45 + rnd(idx + 13));
+
+            ctx.clearRect(tx, ty, TILE + 0.6, TILE + 0.6);
+            moves.push(tx, ty, tx + Math.cos(ang) * dist, ty + Math.sin(ang) * dist);
+          }
+        }
+
+        // Pass two: redraw them at their thrown positions, over the holes.
+        for (var i = 0; i < moves.length; i += 4) {
+          ctx.drawImage(
+            img,
+            moves[i] * sx, moves[i + 1] * sy, TILE * sx, TILE * sy,
+            moves[i + 2], moves[i + 3], TILE + 0.6, TILE + 0.6
+          );
+        }
       }
 
       function tick(ts) {
-        // Hold the pixelation while the pointer is active or recently moved,
-        // then wipe the mask back out.
-        if (!pointer.live && ts - lastMove > HOLD) {
-          mask.g.globalCompositeOperation = 'destination-out';
-          mask.g.fillStyle = 'rgba(0,0,0,' + HEAL + ')';
-          mask.g.fillRect(0, 0, w, h);
-          mask.g.globalCompositeOperation = 'source-over';
+        if (targetPower > power) power = Math.min(targetPower, power + 0.22);
+        else power = Math.max(0, power - EASE);
 
-          // Cheap "is it empty yet" check on a coarse sample of the mask.
-          if (ts - lastMove > HOLD + 4000) { mask.g.clearRect(0, 0, w, h); dirty = false; }
-        }
+        if (ts - lastMove > HOLD) targetPower = 0;
 
-        compose();
+        draw();
 
-        if (dirty) raf = requestAnimationFrame(tick);
-        else raf = null;
+        if (power > 0.001 || targetPower > 0) raf = requestAnimationFrame(tick);
+        else { raf = null; draw(); }
       }
 
       function kick() { if (!raf) raf = requestAnimationFrame(tick); }
@@ -1236,38 +1233,26 @@
         var pt = e.touches ? e.touches[0] : e;
         pointer.x = pt.clientX - rect.left;
         pointer.y = pt.clientY - rect.top;
-        pointer.live = true;
         lastMove = performance.now();
-        if (!reduced) { stamp(); kick(); }
+        if (!reduced) { targetPower = 1; kick(); }
       }
 
-      function release() {
-        pointer.live = false;
-        lastMove = performance.now();
-        kick();
-      }
+      function release() { targetPower = 0; kick(); }
 
       function start() {
         if (!build()) return;
         wrap.classList.add('is-pixelated');
-        compose();
+        draw();
 
         wrap.addEventListener('mousemove', track);
         wrap.addEventListener('mouseleave', release);
         wrap.addEventListener('touchmove', track, { passive: true });
         wrap.addEventListener('touchend', release);
 
-        // The pointer counts as "still" as soon as it stops firing moves.
-        var idle;
-        wrap.addEventListener('mousemove', function () {
-          clearTimeout(idle);
-          idle = setTimeout(release, 90);
-        });
-
         var timer;
         window.addEventListener('resize', function () {
           clearTimeout(timer);
-          timer = setTimeout(build, 200);
+          timer = setTimeout(function () { if (build()) draw(); }, 200);
         });
       }
 
