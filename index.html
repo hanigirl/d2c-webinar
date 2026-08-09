@@ -540,10 +540,12 @@
     /* ═══════════════════════════════════════════════
        WHO IS IT FOR
     ═══════════════════════════════════════════════ */
-    .for-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+    /* A staircase: each line starts further in than the one above it, so the
+       list reads as a descent rather than a grid to scan. */
+    .for-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
       margin-top: 48px;
     }
 
@@ -553,11 +555,22 @@
       align-items: flex-start;
       background: var(--card-2);
       border-radius: var(--radius-sm);
-      padding: 24px 26px;
+      padding: 22px 26px;
       font-size: 24px;
       line-height: 1.35;
       color: rgba(255, 255, 255, 0.86);
+      width: 100%;
+      max-width: 760px;
+      /* --step is set per row below; inline-start is the right edge in RTL. */
+      margin-inline-start: calc(var(--step, 0) * 52px);
     }
+
+    .for-item:nth-child(1) { --step: 0; }
+    .for-item:nth-child(2) { --step: 1; }
+    .for-item:nth-child(3) { --step: 2; }
+    .for-item:nth-child(4) { --step: 3; }
+    .for-item:nth-child(5) { --step: 4; }
+    .for-item:nth-child(6) { --step: 5; }
 
     .for-check {
       flex-shrink: 0;
@@ -743,7 +756,8 @@
        RESPONSIVE
     ═══════════════════════════════════════════════ */
     @media (max-width: 900px) {
-      .learn-grid, .hosts-grid, .for-grid { grid-template-columns: 1fr; }
+      .learn-grid, .hosts-grid { grid-template-columns: 1fr; }
+      .for-item { --step: 0 !important; max-width: 100%; }
       h1.hero-title { font-size: 44px; }
       .wide-only { display: none; }
       h2.section-title { font-size: 40px; }
@@ -974,7 +988,7 @@
       <h2 class="section-title reveal">למי זה מתאים?</h2>
       <p class="section-lead reveal">אם אחד מהמשפטים האלה מרגיש מוכר — המשדר הזה בשבילך.</p>
 
-      <div class="for-grid">
+      <div class="for-list">
         <div class="for-item reveal">
           <span class="for-check" aria-hidden="true">
             <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
