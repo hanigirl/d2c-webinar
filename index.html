@@ -527,18 +527,9 @@
        of the section. Matching the space above to the section's own bottom
        padding centres the pair in what's left instead of leaving it stranded
        under the cards. */
-    /* The sentence needs more scrolling than a single pass through the viewport
-       can give it, so it sticks in place inside a tall track and the writing is
-       driven by how far through that track you are. */
-    .closer-track {
-      position: relative;
-      height: 300vh;
-      margin-top: 100px;
-    }
-
     .learn-closer {
-      position: sticky;
-      top: 34vh;
+      margin-top: 110px;
+      margin-bottom: 24px;
       text-align: center;
     }
 
@@ -863,8 +854,7 @@
       .learn-card { padding: 28px 24px 32px; }
       .learn-card h3 { font-size: 26px; }
       .learn-card p, .host p { font-size: 20px; }
-      .closer-track { height: 200vh; margin-top: 56px; }
-      .learn-closer { top: 30vh; }
+      .learn-closer { margin-top: 64px; margin-bottom: 8px; }
       .for-item { font-size: 21px; padding: 20px; }
       .host h3 { font-size: 27px; }
       .form-card { padding: 32px 24px; }
@@ -1057,11 +1047,9 @@
         </article>
       </div>
 
-      <div class="closer-track">
-        <div class="learn-closer">
-          <p class="type-line" data-type>זו ההזדמנות שלך להוביל כמעצב בתוך מהפכת ה-AI</p>
-          <a class="cta type-cta" href="#register">לשמור לי מקום במשדר</a>
-        </div>
+      <div class="learn-closer">
+        <p class="type-line" data-type>זו ההזדמנות שלך להוביל כמעצב בתוך מהפכת ה-AI</p>
+        <a class="cta type-cta" href="#register">לשמור לי מקום במשדר</a>
       </div>
     </div>
   </section>
@@ -1515,22 +1503,19 @@
       var shown = -1;
       var queued = false;
 
-      var track = line.closest('.closer-track');
-
       function update() {
         queued = false;
         var vh = window.innerHeight;
+        var r = line.getBoundingClientRect();
 
-        // How far through the sticky track we are. Tying the progress to the
-        // track rather than to the line's own position is what lets the writing
-        // span far more scrolling than one pass across the viewport allows.
-        var t = track.getBoundingClientRect();
-        var range = t.height - vh;
-        var p = range > 0 ? -t.top / range : 0;
-
-        // Finish the sentence before the track runs out, so the button has a
-        // stretch of scroll to itself rather than appearing on the last pixel.
-        p = p / 0.76;
+        // In normal flow the writing can only last as long as the line is on
+        // screen, so use nearly all of that travel: it starts the moment the
+        // line clears the bottom edge and finishes just before it reaches the
+        // top. Stretching it further would mean pinning the page, which costs
+        // a screenful of empty space.
+        var from = vh * 1.05;
+        var to = vh * 0.12;
+        var p = (from - r.top) / (from - to);
         p = p < 0 ? 0 : p > 1 ? 1 : p;
 
         var n = Math.round(p * chars.length);
