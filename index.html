@@ -1443,14 +1443,17 @@
         // per row. Deriving each row from its own position looked simultaneous
         // here: the rows sit ~85px apart, far less than the distance any one of
         // them takes to travel, so their windows almost entirely overlapped.
-        var sp = (vh * 0.92 - box.top) / (vh * 0.78);
+        var sp = (vh * 0.92 - box.top) / (vh * 0.95);
         sp = sp < 0 ? 0 : sp > 1 ? 1 : sp;
 
-        var STAGGER = 0.11;   // how far apart the rows start
-        var SPAN = 0.45;      // how long each row takes
+        // Each row owns an equal, non-overlapping slice of the list's progress,
+        // so exactly one is ever in motion — a row finishes arriving before the
+        // next one starts. Deriving the slice from the count keeps that true if
+        // rows are added or removed.
+        var slot = 1 / items.length;
 
         for (var i = 0; i < items.length; i++) {
-          var p = (sp - i * STAGGER) / SPAN;
+          var p = (sp - i * slot) / slot;
           p = p < 0 ? 0 : p > 1 ? 1 : p;
 
           var e = 1 - Math.pow(1 - p, 3);   // ease out, so it settles rather than arrives
