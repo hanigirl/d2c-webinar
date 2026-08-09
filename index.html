@@ -157,21 +157,24 @@
       margin-top: calc(-1 * clamp(90px, 15vw, 190px));
       z-index: 2;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
     }
 
-    /* soft pink/yellow glow behind the hero */
+    /* Pink wash over the hero. Kept inside the section's own width — negative
+       insets put the gradient's edge off-canvas, which rendered as a hard line
+       down the left of the screen. */
     .hero::before {
       content: '';
       position: absolute;
-      inset: -30% -10% auto -10%;
-      height: 80%;
+      inset: -46% 0 auto 0;
+      height: 150%;
       background:
-        radial-gradient(60% 55% at 30% 20%, rgba(255, 43, 155, 0.10), transparent 70%),
-        radial-gradient(50% 50% at 75% 10%, rgba(255, 201, 55, 0.07), transparent 70%);
+        radial-gradient(36% 30% at 27% 40%, rgba(255, 43, 155, 0.16), transparent 72%),
+        radial-gradient(32% 26% at 73% 28%, rgba(150, 90, 255, 0.14), transparent 72%);
       pointer-events: none;
       z-index: 0;
-      filter: blur(20px);
+      filter: blur(44px);
+      mix-blend-mode: screen;
     }
 
     .hero > * { position: relative; z-index: 1; }
@@ -308,8 +311,8 @@
       z-index: 2;
       /* Their bodies are cut by the frame — fade the last stretch so it reads
          as fading out rather than being sliced off. */
-      -webkit-mask-image: linear-gradient(to bottom, #000 46%, rgba(0,0,0,0.72) 68%, rgba(0,0,0,0.28) 85%, transparent 100%);
-      mask-image: linear-gradient(to bottom, #000 46%, rgba(0,0,0,0.72) 68%, rgba(0,0,0,0.28) 85%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
     }
 
     /* Pink glow laid over the cutout. Screen blending makes it read as light
