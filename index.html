@@ -290,7 +290,7 @@
     ═══════════════════════════════════════════════ */
     .hero-visual {
       padding: 44px 32px 0;
-      overflow: visible;
+      overflow-x: clip;
       position: relative;
       z-index: 1;
     }
@@ -306,7 +306,7 @@
     .visual-photo-wrap {
       position: relative;
       z-index: 2;
-      width: clamp(420px, 74vw, 840px);
+      width: clamp(220px, 74vw, 840px);
       line-height: 0;
       /* Their bodies are cut by the frame — fade the last stretch so it reads
          as fading out rather than being sliced off. */
@@ -382,7 +382,7 @@
     }
 
     /* ── Drifting pixels ── */
-    .pixels { position: absolute; inset: -6% -4%; z-index: 1; pointer-events: none; }
+    .pixels { position: absolute; inset: -6% 0; z-index: 1; pointer-events: none; }
 
     .pixels i {
       position: absolute;
@@ -529,12 +529,40 @@
     }
 
     .learn-closer p {
-      font-size: 46px;
+      /* One line, edge to edge. The size follows the viewport so the sentence
+         never wraps — a line that breaks mid-type reads as a paragraph filling
+         in, not as something being written. */
+      font-size: clamp(17px, 4.15vw, 60px);
+      white-space: nowrap;
       font-weight: 700;
-      line-height: 1.22;
-      max-width: 26ch;
-      margin: 0 auto 40px;
+      line-height: 1.2;
+      max-width: none;
+      margin: 0 auto 44px;
       letter-spacing: -0.025em;
+      position: relative;
+    }
+
+    /* The write head. Positioned from measured geometry rather than inserted
+       into the text, so it lands correctly inside the Latin run too. */
+    .type-caret {
+      position: absolute;
+      top: 50%;
+      width: 3px;
+      height: 0.78em;
+      background: var(--pink);
+      transform: translateY(-50%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .type-caret.on {
+      opacity: 1;
+      animation: caret-blink 0.9s step-end infinite;
+    }
+
+    @keyframes caret-blink {
+      0%, 55% { opacity: 1; }
+      55.01%, 100% { opacity: 0; }
     }
 
     /* Characters are laid out from the start and only faded in, so the line
@@ -800,7 +828,6 @@
       .hero-sub { font-size: 24px; }
       .hero-tagline { font-size: 22px; }
       .promise p { font-size: 28px; }
-      .learn-closer p { font-size: 36px; }
       .section-pad { padding-block: 84px; }
     }
 
@@ -818,7 +845,6 @@
       .learn-card { padding: 28px 24px 32px; }
       .learn-card h3 { font-size: 26px; }
       .learn-card p, .host p { font-size: 20px; }
-      .learn-closer p { font-size: 30px; }
       .for-item { font-size: 21px; padding: 20px; }
       .host h3 { font-size: 27px; }
       .form-card { padding: 32px 24px; }
@@ -1408,15 +1434,25 @@
       var OFFSET = 140;   // how far right a row waits before it comes in
       var queued = false;
 
+      var list = items[0].parentNode;
+
       function update() {
         queued = false;
         var vh = window.innerHeight;
-        var from = vh * 0.94;   // starts moving once its top is here
-        var to = vh * 0.58;     // fully home by here
+        var box = list.getBoundingClientRect();
+
+        // One progress value for the whole list, then a staggered slice of it
+        // per row. Deriving each row from its own position looked simultaneous
+        // here: the rows sit ~85px apart, far less than the distance any one of
+        // them takes to travel, so their windows almost entirely overlapped.
+        var sp = (vh * 0.92 - box.top) / (vh * 0.78);
+        sp = sp < 0 ? 0 : sp > 1 ? 1 : sp;
+
+        var STAGGER = 0.11;   // how far apart the rows start
+        var SPAN = 0.45;      // how long each row takes
 
         for (var i = 0; i < items.length; i++) {
-          var r = items[i].getBoundingClientRect();
-          var p = (from - r.top) / (from - to);
+          var p = (sp - i * STAGGER) / SPAN;
           p = p < 0 ? 0 : p > 1 ? 1 : p;
 
           var e = 1 - Math.pow(1 - p, 3);   // ease out, so it settles rather than arrives
@@ -1461,6 +1497,11 @@
         chars.push(sp);
       }
 
+      var caret = document.createElement('span');
+      caret.className = 'type-caret';
+      caret.setAttribute('aria-hidden', 'true');
+      line.appendChild(caret);
+
       var shown = -1;
       var queued = false;
 
@@ -1472,8 +1513,8 @@
         // Type across the last third of the line's approach to the middle of
         // the screen: it starts when the line is one third up from the bottom
         // and completes a little above centre.
-        var from = vh * 0.88;
-        var to = vh * 0.42;
+        var from = vh * 1.02;
+        var to = vh * 0.24;
         var p = (from - r.top) / (from - to);
         p = p < 0 ? 0 : p > 1 ? 1 : p;
 
@@ -1485,6 +1526,17 @@
             for (var j = shown - 1; j >= n; j--) if (chars[j]) chars[j].classList.remove('on');
           }
           shown = n;
+        }
+
+        // Park the caret just past the last lit character — in RTL that is
+        // its left edge, which is where the next one will appear.
+        if (n > 0 && p < 0.999) {
+          var last = chars[n - 1].getBoundingClientRect();
+          var box = line.getBoundingClientRect();
+          caret.style.left = (last.left - box.left - 1) + 'px';
+          caret.classList.add('on');
+        } else {
+          caret.classList.remove('on');
         }
 
         if (cta) cta.classList.toggle('is-in', p >= 0.999);
