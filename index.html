@@ -790,7 +790,16 @@
       flex-wrap: wrap;
     }
 
-    footer img { height: 26px; width: auto; opacity: 0.75; }
+    /* flex would otherwise be free to squeeze these; object-fit is a
+       second guard in case a logo is ever swapped for one without
+       intrinsic dimensions. */
+    footer img {
+      height: 26px;
+      width: auto;
+      flex: none;
+      object-fit: contain;
+      opacity: 0.75;
+    }
 
     footer p {
       font-size: 18px;
