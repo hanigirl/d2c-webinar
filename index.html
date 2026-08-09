@@ -1508,13 +1508,12 @@
         var vh = window.innerHeight;
         var r = line.getBoundingClientRect();
 
-        // In normal flow the writing can only last as long as the line is on
-        // screen, so use nearly all of that travel: it starts the moment the
-        // line clears the bottom edge and finishes just before it reaches the
-        // top. Stretching it further would mean pinning the page, which costs
-        // a screenful of empty space.
-        var from = vh * 1.05;
-        var to = vh * 0.12;
+        // Finish while the line is still comfortably in view. Running the
+        // writing all the way to the top edge stretched it out, but the last
+        // stretch happened above the reader's attention — the sentence was
+        // still filling in after they had scrolled past it.
+        var from = vh * 0.95;
+        var to = vh * 0.46;
         var p = (from - r.top) / (from - to);
         p = p < 0 ? 0 : p > 1 ? 1 : p;
 
