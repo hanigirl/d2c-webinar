@@ -1117,15 +1117,11 @@
   </div>
 
   <script>
-    // ── Pixelated hosts: the photo resolves out of the mosaic, tile by tile ──
+    // ── Hosts photo: the cursor pixelates what it passes over ──
     //
-    // Same idea as the reveal on shiftnudge.com: the image is a grid of tiles,
-    // and each tile flips independently from mosaic to real photo in a random
-    // order. It reads as a signal resolving rather than a spotlight sweeping.
-    //
-    // Layers: a grey mosaic drawn once, the sharp photo, and a mask marking
-    // which tiles have flipped. Only the tiles that changed this frame get
-    // repainted into the mask, so the cost per frame stays flat.
+    // The photo shows normally. A colour mosaic of it is painted on top, but
+    // only inside a mask the pointer stamps into. Once the pointer has been
+    // still for a moment the mask fades and the photo heals back.
     (function () {
       var wrap = document.querySelector('.visual-photo-wrap');
       if (!wrap) return;
@@ -1135,16 +1131,16 @@
       var ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      var CELL = 12;             // tile size, in CSS px
-      var IN_MS = 700;           // mosaic -> photo
-      var OUT_MS = 520;          // photo -> mosaic
+      var CELL = 14;        // mosaic tile, in CSS px
+      var RADIUS = 92;      // how far the pixelation spreads around the pointer
+      var HOLD = 1600;      // ms of stillness before it starts healing
+      var HEAL = 0.05;      // mask fade per frame once healing
       var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      var w = 0, h = 0, dpr = 1, cols = 0, rows = 0, cw = 0, ch = 0;
-      var mosaic, mask, sharp, order = [], total = 0;
-      var shown = 0;             // tiles currently flipped to photo
-      var target = 0;
-      var raf = null;
+      var w = 0, h = 0, dpr = 1;
+      var mosaic, mask, pixels;
+      var pointer = { x: 0, y: 0, live: false };
+      var lastMove = 0, dirty = false, raf = null;
 
       function layer() {
         var c = document.createElement('canvas');
@@ -1165,36 +1161,16 @@
         canvas.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        cols = Math.max(1, Math.round(w / CELL));
-        rows = Math.max(1, Math.round(h / CELL));
-        cw = w / cols;
-        ch = h / rows;
-        total = cols * rows;
-
         mosaic = layer();
         mask = layer();
-        sharp = layer();
+        pixels = layer();
 
-        // Mosaic: downscale hard, drain the colour per pixel (a blend-mode fill
-        // would paint the transparent surround too), then blow it back up with
-        // smoothing off.
+        // Mosaic keeps its colour — only the resolution drops.
+        var cols = Math.max(1, Math.round(w / CELL));
+        var rows = Math.max(1, Math.round(h / CELL));
         var small = document.createElement('canvas');
         small.width = cols; small.height = rows;
-        var sg = small.getContext('2d');
-        sg.drawImage(img, 0, 0, cols, rows);
-
-        try {
-          var d = sg.getImageData(0, 0, cols, rows);
-          var px = d.data;
-          for (var i = 0; i < px.length; i += 4) {
-            if (!px[i + 3]) continue;
-            var lum = 0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2];
-            px[i] = px[i + 1] = px[i + 2] = lum;
-          }
-          sg.putImageData(d, 0, 0);
-        } catch (e) {
-          return false;         // tainted canvas — leave the plain photo up
-        }
+        small.getContext('2d').drawImage(img, 0, 0, cols, rows);
 
         var g = mosaic.g;
         g.imageSmoothingEnabled = false;
@@ -1202,77 +1178,73 @@
         g.webkitImageSmoothingEnabled = false;
         g.drawImage(small, 0, 0, w, h);
 
-        // Flip order: shuffled once, so the photo materialises in scattered
-        // tiles instead of wiping in a direction.
-        order = new Uint32Array(total);
-        for (var n = 0; n < total; n++) order[n] = n;
-        for (var j = total - 1; j > 0; j--) {
-          var k = (Math.random() * (j + 1)) | 0;
-          var t = order[j]; order[j] = order[k]; order[k] = t;
-        }
-
-        shown = 0;
         mask.g.clearRect(0, 0, w, h);
+        dirty = false;
         return true;
       }
 
-      function tileRect(idx) {
-        var x = idx % cols, y = (idx / cols) | 0;
-        // +1 closes the seams left by fractional tile sizes.
-        return [x * cw, y * ch, cw + 1, ch + 1];
-      }
-
-      function paintTo(next) {
-        var r, i;
-        if (next > shown) {
-          mask.g.fillStyle = '#fff';
-          for (i = shown; i < next; i++) {
-            r = tileRect(order[i]);
-            mask.g.fillRect(r[0], r[1], r[2], r[3]);
-          }
-        } else {
-          for (i = shown - 1; i >= next; i--) {
-            r = tileRect(order[i]);
-            mask.g.clearRect(r[0], r[1], r[2], r[3]);
-          }
-        }
-        shown = next;
-      }
-
       function compose() {
-        sharp.g.clearRect(0, 0, w, h);
-        if (shown > 0) {
-          sharp.g.drawImage(img, 0, 0, w, h);
-          sharp.g.globalCompositeOperation = 'destination-in';
-          sharp.g.drawImage(mask.c, 0, 0, w, h);
-          sharp.g.globalCompositeOperation = 'source-over';
-        }
         ctx.clearRect(0, 0, w, h);
-        ctx.drawImage(mosaic.c, 0, 0, w, h);
-        if (shown > 0) ctx.drawImage(sharp.c, 0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+
+        if (dirty) {
+          pixels.g.clearRect(0, 0, w, h);
+          pixels.g.drawImage(mosaic.c, 0, 0, w, h);
+          pixels.g.globalCompositeOperation = 'destination-in';
+          pixels.g.drawImage(mask.c, 0, 0, w, h);
+          pixels.g.globalCompositeOperation = 'source-over';
+          ctx.drawImage(pixels.c, 0, 0, w, h);
+        }
       }
 
-      var last = null;
+      function stamp() {
+        var grad = mask.g.createRadialGradient(
+          pointer.x, pointer.y, 0, pointer.x, pointer.y, RADIUS);
+        grad.addColorStop(0, 'rgba(0,0,0,1)');
+        grad.addColorStop(0.6, 'rgba(0,0,0,0.95)');
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        mask.g.fillStyle = grad;
+        mask.g.beginPath();
+        mask.g.arc(pointer.x, pointer.y, RADIUS, 0, Math.PI * 2);
+        mask.g.fill();
+        dirty = true;
+      }
+
       function tick(ts) {
-        if (last === null) last = ts;
-        var dt = ts - last;
-        last = ts;
+        // Hold the pixelation while the pointer is active or recently moved,
+        // then wipe the mask back out.
+        if (!pointer.live && ts - lastMove > HOLD) {
+          mask.g.globalCompositeOperation = 'destination-out';
+          mask.g.fillStyle = 'rgba(0,0,0,' + HEAL + ')';
+          mask.g.fillRect(0, 0, w, h);
+          mask.g.globalCompositeOperation = 'source-over';
 
-        var rate = total / (target > shown ? IN_MS : OUT_MS);
-        var step = Math.ceil(rate * dt);
-        var next = target > shown ? Math.min(target, shown + step)
-                                  : Math.max(target, shown - step);
+          // Cheap "is it empty yet" check on a coarse sample of the mask.
+          if (ts - lastMove > HOLD + 4000) { mask.g.clearRect(0, 0, w, h); dirty = false; }
+        }
 
-        if (next !== shown) { paintTo(next); compose(); }
+        compose();
 
-        if (shown !== target) raf = requestAnimationFrame(tick);
-        else { raf = null; last = null; }
+        if (dirty) raf = requestAnimationFrame(tick);
+        else raf = null;
       }
 
-      function to(v) {
-        target = v;
-        if (reduced) { paintTo(v); compose(); return; }
-        if (!raf) { last = null; raf = requestAnimationFrame(tick); }
+      function kick() { if (!raf) raf = requestAnimationFrame(tick); }
+
+      function track(e) {
+        var rect = wrap.getBoundingClientRect();
+        var pt = e.touches ? e.touches[0] : e;
+        pointer.x = pt.clientX - rect.left;
+        pointer.y = pt.clientY - rect.top;
+        pointer.live = true;
+        lastMove = performance.now();
+        if (!reduced) { stamp(); kick(); }
+      }
+
+      function release() {
+        pointer.live = false;
+        lastMove = performance.now();
+        kick();
       }
 
       function start() {
@@ -1280,26 +1252,22 @@
         wrap.classList.add('is-pixelated');
         compose();
 
-        wrap.addEventListener('mouseenter', function () { to(total); });
-        wrap.addEventListener('mouseleave', function () { to(0); });
-        // No hover on touch — a tap toggles it instead.
-        wrap.addEventListener('touchstart', function () {
-          to(target === total ? 0 : total);
-        }, { passive: true });
+        wrap.addEventListener('mousemove', track);
+        wrap.addEventListener('mouseleave', release);
+        wrap.addEventListener('touchmove', track, { passive: true });
+        wrap.addEventListener('touchend', release);
 
-        // Resolve once on arrival, then settle back, so the effect is
-        // discoverable without a cursor.
-        if (!reduced) {
-          setTimeout(function () { to(total); }, 500);
-          setTimeout(function () { if (target === total) to(0); }, 2100);
-        }
+        // The pointer counts as "still" as soon as it stops firing moves.
+        var idle;
+        wrap.addEventListener('mousemove', function () {
+          clearTimeout(idle);
+          idle = setTimeout(release, 90);
+        });
 
         var timer;
         window.addEventListener('resize', function () {
           clearTimeout(timer);
-          timer = setTimeout(function () {
-            if (build()) { target = 0; compose(); }
-          }, 200);
+          timer = setTimeout(build, 200);
         });
       }
 
