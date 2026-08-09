@@ -312,7 +312,8 @@
       mask-image: linear-gradient(to bottom, #000 46%, rgba(0,0,0,0.72) 68%, rgba(0,0,0,0.28) 85%, transparent 100%);
     }
 
-    /* Rim glow behind the cutout so they don't float flat on the black. */
+    /* Pink glow laid over the cutout. Screen blending makes it read as light
+       falling on them rather than a veil sitting in front of their faces. */
     .visual-stage::before {
       content: '';
       position: absolute;
@@ -322,15 +323,16 @@
       height: 88%;
       transform: translateX(-50%);
       background:
-        radial-gradient(50% 50% at 50% 45%, rgba(150, 90, 255, 0.28), transparent 72%),
-        radial-gradient(42% 44% at 62% 38%, rgba(255, 43, 155, 0.20), transparent 72%);
+        radial-gradient(50% 50% at 50% 45%, rgba(150, 90, 255, 0.30), transparent 72%),
+        radial-gradient(42% 44% at 62% 38%, rgba(255, 43, 155, 0.24), transparent 72%);
       filter: blur(30px);
-      z-index: 0;
+      mix-blend-mode: screen;
+      z-index: 3;
       pointer-events: none;
     }
 
     /* ── Floating tool tiles ── */
-    .tiles { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+    .tiles { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
 
     .tile {
       position: absolute;
