@@ -153,7 +153,9 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 8px 32px 72px;
+      padding: 0 32px 72px;
+      margin-top: calc(-1 * clamp(90px, 15vw, 190px));
+      z-index: 2;
       position: relative;
       overflow: hidden;
     }
@@ -165,8 +167,8 @@
       inset: -30% -10% auto -10%;
       height: 80%;
       background:
-        radial-gradient(60% 55% at 30% 20%, rgba(255, 43, 155, 0.20), transparent 70%),
-        radial-gradient(50% 50% at 75% 10%, rgba(255, 201, 55, 0.14), transparent 70%);
+        radial-gradient(60% 55% at 30% 20%, rgba(255, 43, 155, 0.10), transparent 70%),
+        radial-gradient(50% 50% at 75% 10%, rgba(255, 201, 55, 0.07), transparent 70%);
       pointer-events: none;
       z-index: 0;
       filter: blur(20px);
@@ -275,8 +277,10 @@
        and a drifting pixel field
     ═══════════════════════════════════════════════ */
     .hero-visual {
-      padding: 48px 32px 0;
-      overflow: hidden;
+      padding: 40px 32px 0;
+      overflow: visible;
+      position: relative;
+      z-index: 1;
     }
 
     .visual-stage {
@@ -295,8 +299,8 @@
       z-index: 2;
       /* Their bodies are cut by the frame — fade the last stretch so it reads
          as fading out rather than being sliced off. */
-      -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
-      mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, #000 46%, rgba(0,0,0,0.72) 68%, rgba(0,0,0,0.28) 85%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 46%, rgba(0,0,0,0.72) 68%, rgba(0,0,0,0.28) 85%, transparent 100%);
     }
 
     /* Rim glow behind the cutout so they don't float flat on the black. */
@@ -373,7 +377,7 @@
     }
 
     @media (max-width: 600px) {
-      .hero-visual { padding: 28px 16px 0; }
+      .hero-visual { padding: 24px 16px 0; }
       .tile { width: 52px; height: 52px; border-radius: 15px; }
       .tile img, .tile svg { width: 26px; height: 26px; }
       .tile-1 { inset-inline-start: 0; }
