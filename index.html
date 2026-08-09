@@ -1117,101 +1117,118 @@
   </div>
 
   <script>
-    // ── Pixelated hosts: grey mosaic that the cursor reveals in colour ──
+    // ── Pixelated hosts: the cursor wipes the mosaic away to the real photo ──
+    //
+    // Three layers. A grey mosaic drawn once, the sharp photo, and a mask that
+    // holds where the photo shows through. The mask fades every frame and the
+    // pointer stamps into it, so the reveal trails behind the cursor and heals
+    // over once it leaves.
     (function () {
       var wrap = document.querySelector('.visual-photo-wrap');
       if (!wrap) return;
 
       var img = wrap.querySelector('.visual-photo');
       var canvas = wrap.querySelector('.visual-canvas');
-      var ctx = canvas.getContext('2d', { alpha: true });
+      var ctx = canvas.getContext('2d');
       if (!ctx) return;
 
       var CELL = 12;        // mosaic cell, in CSS px
-      var RADIUS = 96;      // how far from the cursor colour bleeds
-      var DECAY = 0.93;     // per-frame fade back to grey
+      var RADIUS = 110;     // radius of the clear area around the pointer
+      var FADE = 0.055;     // how fast the reveal heals over, per frame
 
-      var cols = 0, rows = 0, cellPx = CELL, dpr = 1;
-      var colour = null;    // Uint8 RGBA, one entry per cell
-      var heat = null;      // Float32, 0 = grey, 1 = full colour
-      var pointer = { x: -1e4, y: -1e4, on: false };
+      var w = 0, h = 0, dpr = 1;
+      var mosaic, mask, sharp;        // offscreen layers
+      var pointer = { x: 0, y: 0, on: false };
       var raf = null;
 
-      function sample() {
-        var w = wrap.clientWidth, h = wrap.clientHeight;
+      function layer() {
+        var c = document.createElement('canvas');
+        c.width = Math.round(w * dpr);
+        c.height = Math.round(h * dpr);
+        var g = c.getContext('2d');
+        g.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return { c: c, g: g };
+      }
+
+      function build() {
+        w = wrap.clientWidth;
+        h = wrap.clientHeight;
         if (!w || !h || !img.naturalWidth) return false;
 
         dpr = Math.min(window.devicePixelRatio || 1, 2);
-        cols = Math.max(1, Math.round(w / CELL));
-        rows = Math.max(1, Math.round(h / CELL));
-        cellPx = w / cols;
-
         canvas.width = Math.round(w * dpr);
         canvas.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        // One cheap downscale gives the per-cell average colour and alpha.
-        var off = document.createElement('canvas');
-        off.width = cols; off.height = rows;
-        var octx = off.getContext('2d');
-        octx.drawImage(img, 0, 0, cols, rows);
+        mosaic = layer();
+        mask = layer();
+        sharp = layer();
 
+        // Mosaic: downscale hard, then blow it back up with smoothing off.
+        var cols = Math.max(1, Math.round(w / CELL));
+        var rows = Math.max(1, Math.round(h / CELL));
+        var small = document.createElement('canvas');
+        small.width = cols; small.height = rows;
+        var sg = small.getContext('2d');
+        sg.drawImage(img, 0, 0, cols, rows);
+
+        // Drain the colour per pixel rather than with a blend-mode fill: a fill
+        // paints the transparent surround too, which turned the whole frame
+        // into a grey block.
         try {
-          colour = octx.getImageData(0, 0, cols, rows).data;
+          var d = sg.getImageData(0, 0, cols, rows);
+          var px = d.data;
+          for (var i = 0; i < px.length; i += 4) {
+            if (!px[i + 3]) continue;
+            var lum = 0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2];
+            px[i] = px[i + 1] = px[i + 2] = lum;
+          }
+          sg.putImageData(d, 0, 0);
         } catch (e) {
           return false;   // tainted canvas — leave the plain photo up
         }
 
-        heat = new Float32Array(cols * rows);
+        var g = mosaic.g;
+        g.imageSmoothingEnabled = false;
+        g.mozImageSmoothingEnabled = false;
+        g.webkitImageSmoothingEnabled = false;
+        g.drawImage(small, 0, 0, w, h);
+
         return true;
       }
 
-      function draw() {
-        ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+      function frame() {
+        // Heal the mask a little every frame.
+        mask.g.globalCompositeOperation = 'destination-out';
+        mask.g.fillStyle = 'rgba(0,0,0,' + FADE + ')';
+        mask.g.fillRect(0, 0, w, h);
+        mask.g.globalCompositeOperation = 'source-over';
 
-        var active = false;
-        var r2 = RADIUS * RADIUS;
-
-        for (var y = 0; y < rows; y++) {
-          for (var x = 0; x < cols; x++) {
-            var i = y * cols + x;
-            var a = colour[i * 4 + 3] / 255;
-            if (a < 0.02) { heat[i] = 0; continue; }
-
-            var cx = (x + 0.5) * cellPx;
-            var cy = (y + 0.5) * cellPx;
-
-            if (pointer.on) {
-              var dx = cx - pointer.x, dy = cy - pointer.y;
-              var d2 = dx * dx + dy * dy;
-              if (d2 < r2) {
-                var near = 1 - Math.sqrt(d2) / RADIUS;
-                if (near > heat[i]) heat[i] = near;
-              }
-            }
-
-            var t = heat[i];
-            if (t > 0.002) { heat[i] = t * DECAY; active = true; }
-            else heat[i] = 0;
-
-            var r = colour[i * 4], g = colour[i * 4 + 1], b = colour[i * 4 + 2];
-            // Grey base sits slightly darker so the colour reveal pops.
-            var lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) * 0.92;
-            var e = t * t * (3 - 2 * t);     // smoothstep
-
-            ctx.fillStyle = 'rgba(' +
-              Math.round(lum + (r - lum) * e) + ',' +
-              Math.round(lum + (g - lum) * e) + ',' +
-              Math.round(lum + (b - lum) * e) + ',' + a.toFixed(3) + ')';
-            ctx.fillRect(Math.floor(x * cellPx), Math.floor(y * cellPx),
-                         Math.ceil(cellPx) + 1, Math.ceil(cellPx) + 1);
-          }
+        if (pointer.on) {
+          var grad = mask.g.createRadialGradient(
+            pointer.x, pointer.y, 0, pointer.x, pointer.y, RADIUS);
+          grad.addColorStop(0, 'rgba(0,0,0,1)');
+          grad.addColorStop(0.55, 'rgba(0,0,0,0.92)');
+          grad.addColorStop(1, 'rgba(0,0,0,0)');
+          mask.g.fillStyle = grad;
+          mask.g.beginPath();
+          mask.g.arc(pointer.x, pointer.y, RADIUS, 0, Math.PI * 2);
+          mask.g.fill();
         }
 
-        raf = (active || pointer.on) ? requestAnimationFrame(draw) : null;
-      }
+        // Sharp photo, kept only where the mask is painted.
+        sharp.g.clearRect(0, 0, w, h);
+        sharp.g.drawImage(img, 0, 0, w, h);
+        sharp.g.globalCompositeOperation = 'destination-in';
+        sharp.g.drawImage(mask.c, 0, 0, w, h);
+        sharp.g.globalCompositeOperation = 'source-over';
 
-      function kick() { if (!raf) raf = requestAnimationFrame(draw); }
+        ctx.clearRect(0, 0, w, h);
+        ctx.drawImage(mosaic.c, 0, 0, w, h);
+        ctx.drawImage(sharp.c, 0, 0, w, h);
+
+        raf = requestAnimationFrame(frame);
+      }
 
       function track(e) {
         var rect = wrap.getBoundingClientRect();
@@ -1219,37 +1236,36 @@
         pointer.x = pt.clientX - rect.left;
         pointer.y = pt.clientY - rect.top;
         pointer.on = true;
-        kick();
       }
 
       function start() {
-        if (!sample()) return;
+        if (!build()) return;
         wrap.classList.add('is-pixelated');
-        draw();
 
         wrap.addEventListener('mousemove', track);
         wrap.addEventListener('touchmove', track, { passive: true });
-        wrap.addEventListener('mouseleave', function () { pointer.on = false; kick(); });
-        wrap.addEventListener('touchend', function () { pointer.on = false; kick(); });
+        wrap.addEventListener('mouseleave', function () { pointer.on = false; });
+        wrap.addEventListener('touchend', function () { pointer.on = false; });
 
-        // One automatic sweep on arrival, so the reveal is discoverable —
-        // on touch there is no hover to stumble into it.
+        // One automatic pass on arrival, so the reveal is discoverable — on
+        // touch there is no hover to stumble into it.
         var t0 = null;
         (function sweep(ts) {
           if (t0 === null) t0 = ts;
-          var p = (ts - t0) / 2200;
-          if (p >= 1) { pointer.on = false; kick(); return; }
+          var p = (ts - t0) / 2400;
+          if (p >= 1) { pointer.on = false; return; }
           pointer.on = true;
-          pointer.x = wrap.clientWidth * (1 - p);
-          pointer.y = wrap.clientHeight * (0.34 + 0.12 * Math.sin(p * Math.PI * 2));
-          kick();
+          pointer.x = w * (1 - p);
+          pointer.y = h * (0.32 + 0.10 * Math.sin(p * Math.PI * 2));
           requestAnimationFrame(sweep);
         })(performance.now());
 
-        var resizeTimer;
+        frame();
+
+        var timer;
         window.addEventListener('resize', function () {
-          clearTimeout(resizeTimer);
-          resizeTimer = setTimeout(function () { if (sample()) kick(); }, 200);
+          clearTimeout(timer);
+          timer = setTimeout(build, 200);
         });
       }
 
