@@ -1132,9 +1132,10 @@
       var ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      var TILE = 13;        // slab size, in CSS px
-      var RADIUS = 155;     // how far the shatter reaches
-      var PUSH = 64;        // maximum displacement at the centre
+      var TILE = 12;        // slab size, in CSS px
+      var RADIUS = 92;      // how far the shatter reaches
+      var PUSH = 44;        // maximum displacement at the centre
+      var DRIFT = 0.0021;   // how fast loose slabs keep moving
       var HOLD = 1200;      // ms of stillness before it settles back
       var EASE = 0.055;     // how fast the displacement unwinds
       var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1165,7 +1166,8 @@
         return true;
       }
 
-      function draw() {
+      function draw(now) {
+        now = now || performance.now();
         ctx.clearRect(0, 0, w, h);
         ctx.drawImage(img, 0, 0, w, h);
 
@@ -1197,7 +1199,9 @@
             // geometric. Tiles right at the centre get thrown furthest.
             ang = d < 0.001 ? rnd(idx) * 6.283 : Math.atan2(dy, dx);
             ang += (rnd(idx + 7) - 0.5) * 0.7;
+            ang += Math.sin(now * DRIFT + rnd(idx + 3) * 6.283) * 0.42;
             dist = f * PUSH * power * (0.45 + rnd(idx + 13));
+            dist *= 0.72 + 0.38 * Math.sin(now * DRIFT * 1.6 + rnd(idx + 5) * 6.283);
 
             ctx.clearRect(tx, ty, TILE + 0.6, TILE + 0.6);
             moves.push(tx, ty, tx + Math.cos(ang) * dist, ty + Math.sin(ang) * dist);
@@ -1220,7 +1224,7 @@
 
         if (ts - lastMove > HOLD) targetPower = 0;
 
-        draw();
+        draw(ts);
 
         if (power > 0.001 || targetPower > 0) raf = requestAnimationFrame(tick);
         else { raf = null; draw(); }
