@@ -529,12 +529,40 @@
     }
 
     .learn-closer p {
-      font-size: 32px;
+      font-size: 46px;
       font-weight: 700;
-      line-height: 1.2;
-      max-width: 32ch;
-      margin: 0 auto 32px;
-      letter-spacing: -0.02em;
+      line-height: 1.22;
+      max-width: 26ch;
+      margin: 0 auto 40px;
+      letter-spacing: -0.025em;
+    }
+
+    /* Characters are laid out from the start and only faded in, so the line
+       never reflows as it fills — with mixed Hebrew and Latin, removing and
+       re-adding text would let bidi reorder the whole line mid-type. */
+    .type-line span {
+      opacity: 0;
+      transition: opacity 0.12s linear;
+    }
+
+    .type-line span.on { opacity: 1; }
+
+    .type-cta {
+      opacity: 0;
+      transform: translateY(14px) scale(0.96);
+      transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
+      pointer-events: none;
+    }
+
+    .type-cta.is-in {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .type-line span { opacity: 1; }
+      .type-cta { opacity: 1; transform: none; pointer-events: auto; }
     }
 
     /* ═══════════════════════════════════════════════
@@ -764,6 +792,7 @@
       .hero-sub { font-size: 24px; }
       .hero-tagline { font-size: 22px; }
       .promise p { font-size: 28px; }
+      .learn-closer p { font-size: 36px; }
       .section-pad { padding-block: 84px; }
     }
 
@@ -781,7 +810,7 @@
       .learn-card { padding: 28px 24px 32px; }
       .learn-card h3 { font-size: 26px; }
       .learn-card p, .host p { font-size: 20px; }
-      .learn-closer p { font-size: 26px; }
+      .learn-closer p { font-size: 30px; }
       .for-item { font-size: 21px; padding: 20px; }
       .host h3 { font-size: 27px; }
       .form-card { padding: 32px 24px; }
@@ -975,8 +1004,8 @@
       </div>
 
       <div class="learn-closer">
-        <p class="reveal">זו ההזדמנות שלך להוביל כמעצב בתוך מהפכת ה-AI</p>
-        <a class="cta reveal" href="#register">לשמור לי מקום במשדר</a>
+        <p class="type-line" data-type>זו ההזדמנות שלך להוביל כמעצב בתוך מהפכת ה-AI</p>
+        <a class="cta type-cta" href="#register">לשמור לי מקום במשדר</a>
       </div>
     </div>
   </section>
@@ -1352,6 +1381,71 @@
 
       if (img.complete && img.naturalWidth) start();
       else img.addEventListener('load', start);
+    })();
+
+    // ── Scroll-typed closing line ──
+    // The line writes itself as the section scrolls up and unwrites when you
+    // scroll back, so the sentence is tied to the reader's own movement rather
+    // than firing once and being over. The button only arrives once the
+    // sentence has finished making its case.
+    (function () {
+      var line = document.querySelector('[data-type]');
+      if (!line) return;
+
+      var cta = document.querySelector('.type-cta');
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (reduced) { if (cta) cta.classList.add('is-in'); return; }
+
+      // Wrap every character. Spaces stay as-is so words can still break.
+      var text = line.textContent;
+      var chars = [];
+      line.textContent = '';
+      for (var i = 0; i < text.length; i++) {
+        var sp = document.createElement('span');
+        sp.textContent = text[i];
+        line.appendChild(sp);
+        chars.push(sp);
+      }
+
+      var shown = -1;
+      var queued = false;
+
+      function update() {
+        queued = false;
+        var r = line.getBoundingClientRect();
+        var vh = window.innerHeight;
+
+        // Type across the last third of the line's approach to the middle of
+        // the screen: it starts when the line is one third up from the bottom
+        // and completes a little above centre.
+        var from = vh * 0.88;
+        var to = vh * 0.42;
+        var p = (from - r.top) / (from - to);
+        p = p < 0 ? 0 : p > 1 ? 1 : p;
+
+        var n = Math.round(p * chars.length);
+        if (n !== shown) {
+          if (n > shown) {
+            for (var i = Math.max(shown, 0); i < n; i++) chars[i].classList.add('on');
+          } else {
+            for (var j = shown - 1; j >= n; j--) if (chars[j]) chars[j].classList.remove('on');
+          }
+          shown = n;
+        }
+
+        if (cta) cta.classList.toggle('is-in', p >= 0.999);
+      }
+
+      function onScroll() {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(update);
+      }
+
+      update();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
     })();
 
     // ── Registration form ──
