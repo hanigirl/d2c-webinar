@@ -154,7 +154,7 @@
       justify-content: center;
       text-align: center;
       padding: 0 32px 72px;
-      margin-top: calc(-1 * clamp(90px, 15vw, 190px));
+      margin-top: calc(-1 * clamp(130px, 21vw, 280px));
       z-index: 2;
       position: relative;
       overflow: visible;
@@ -293,7 +293,7 @@
 
     .visual-stage {
       position: relative;
-      max-width: 900px;
+      max-width: 1140px;
       margin: 0 auto;
       display: flex;
       justify-content: center;
@@ -302,7 +302,7 @@
     .visual-photo-wrap {
       position: relative;
       z-index: 2;
-      width: clamp(280px, 50vw, 560px);
+      width: clamp(420px, 74vw, 840px);
       line-height: 0;
       /* Their bodies are cut by the frame — fade the last stretch so it reads
          as fading out rather than being sliced off. */
@@ -335,7 +335,7 @@
       position: absolute;
       left: 50%;
       top: 8%;
-      width: min(760px, 92%);
+      width: min(1000px, 94%);
       height: 88%;
       transform: translateX(-50%);
       background:
@@ -1132,9 +1132,14 @@
       var ctx = canvas.getContext('2d');
       if (!ctx) return;
 
+      // Tuned against a 560px-wide render, then scaled to whatever width the
+      // photo actually gets — otherwise a larger image gets a relatively finer,
+      // weaker break instead of the same one, bigger.
+      var BASE_W = 560;
       var TILE = 12;        // slab size, in CSS px
       var RADIUS = 92;      // how far the shatter reaches
       var PUSH = 44;        // maximum displacement at the centre
+      var scale = 1;
       var DRIFT = 0.0021;   // how fast loose slabs keep moving
       var HOLD = 1200;      // ms of stillness before it settles back
       var EASE = 0.055;     // how fast the displacement unwinds
@@ -1171,6 +1176,8 @@
         canvas.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+        scale = w / BASE_W;
+
         // Source pixels per CSS pixel, for cutting tiles out of the original.
         sx = img.naturalWidth / w;
         sy = img.naturalHeight / h;
@@ -1184,11 +1191,12 @@
 
         if (power < 0.01) return;
 
-        var R = RADIUS * power;
-        var x0 = Math.max(0, Math.floor((pointer.x - R) / TILE));
-        var x1 = Math.min(Math.ceil(w / TILE), Math.ceil((pointer.x + R) / TILE));
-        var y0 = Math.max(0, Math.floor((pointer.y - R) / TILE));
-        var y1 = Math.min(Math.ceil(h / TILE), Math.ceil((pointer.y + R) / TILE));
+        var T = TILE * scale;
+        var R = RADIUS * scale * power;
+        var x0 = Math.max(0, Math.floor((pointer.x - R) / T));
+        var x1 = Math.min(Math.ceil(w / T), Math.ceil((pointer.x + R) / T));
+        var y0 = Math.max(0, Math.floor((pointer.y - R) / T));
+        var y1 = Math.min(Math.ceil(h / T), Math.ceil((pointer.y + R) / T));
 
         var moves = [];
         var gx, gy, tx, ty, cx, cy, dx, dy, d, f, idx, ang, dist;
@@ -1196,8 +1204,8 @@
         // Pass one: empty every tile the shatter touches, so voids open up.
         for (gy = y0; gy < y1; gy++) {
           for (gx = x0; gx < x1; gx++) {
-            tx = gx * TILE; ty = gy * TILE;
-            cx = tx + TILE / 2; cy = ty + TILE / 2;
+            tx = gx * T; ty = gy * T;
+            cx = tx + T / 2; cy = ty + T / 2;
             dx = cx - pointer.x; dy = cy - pointer.y;
             d = Math.sqrt(dx * dx + dy * dy);
             if (d > R) continue;
@@ -1211,10 +1219,10 @@
             ang = d < 0.001 ? rnd(idx) * 6.283 : Math.atan2(dy, dx);
             ang += (rnd(idx + 7) - 0.5) * 0.7;
             ang += Math.sin(now * DRIFT + rnd(idx + 3) * 6.283) * 0.42;
-            dist = f * PUSH * power * (0.45 + rnd(idx + 13));
+            dist = f * PUSH * scale * power * (0.45 + rnd(idx + 13));
             dist *= 0.72 + 0.38 * Math.sin(now * DRIFT * 1.6 + rnd(idx + 5) * 6.283);
 
-            ctx.clearRect(tx, ty, TILE + 0.6, TILE + 0.6);
+            ctx.clearRect(tx, ty, T + 0.6, T + 0.6);
             moves.push(tx, ty, tx + Math.cos(ang) * dist, ty + Math.sin(ang) * dist);
           }
         }
@@ -1223,8 +1231,8 @@
         for (var i = 0; i < moves.length; i += 4) {
           ctx.drawImage(
             img,
-            moves[i] * sx, moves[i + 1] * sy, TILE * sx, TILE * sy,
-            moves[i + 2], moves[i + 3], TILE + 0.6, TILE + 0.6
+            moves[i] * sx, moves[i + 1] * sy, T * sx, T * sy,
+            moves[i + 2], moves[i + 3], T + 0.6, T + 0.6
           );
         }
       }
