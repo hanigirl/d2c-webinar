@@ -591,6 +591,14 @@
       max-width: 760px;
       /* --step is set per row below; inline-start is the right edge in RTL. */
       margin-inline-start: calc(var(--step, 0) * 52px);
+      /* Start parked off to the right; the scroll handler drives it home. */
+      opacity: 0;
+      transform: translateX(140px);
+      will-change: transform, opacity;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .for-item { opacity: 1; transform: none; }
     }
 
     .for-item:nth-child(1) { --step: 0; }
@@ -1018,42 +1026,42 @@
       <p class="section-lead reveal">אם אחד מהמשפטים האלה מרגיש מוכר — המשדר הזה בשבילך.</p>
 
       <div class="for-list">
-        <div class="for-item reveal">
+        <div class="for-item">
           <span class="for-check" aria-hidden="true">
             <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
           אם אתם נלחצים מכל חידוש, לא יודעים איפה להתחיל ומרגישים אבודים מרוב כלים.
         </div>
 
-        <div class="for-item reveal">
+        <div class="for-item">
           <span class="for-check" aria-hidden="true">
             <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
           אם אתם פותחים כל יום בחוסר אנרגיה או בתחושה שמשהו קורה ואתם נשארים מאחור.
         </div>
 
-        <div class="for-item reveal">
+        <div class="for-item">
           <span class="for-check" aria-hidden="true">
             <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
           אם אתם משתמשים ב-AI אבל לא ממש מבינים על מה כולם מדברים.
         </div>
 
-        <div class="for-item reveal">
+        <div class="for-item">
           <span class="for-check" aria-hidden="true">
             <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
           אם אתם פוחדים למצוא את עצמכם מחוץ לעניינים או להישאר לא רלוונטיים.
         </div>
 
-        <div class="for-item reveal">
+        <div class="for-item">
           <span class="for-check" aria-hidden="true">
             <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
           אם אתם רוצים להשיג שליטה ובהירות ולעבוד לפי שיטה מסודרת ומוכחת.
         </div>
 
-        <div class="for-item reveal">
+        <div class="for-item">
           <span class="for-check" aria-hidden="true">
             <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.2 6.2l2.5 2.5L9.8 3.6" stroke="#7bed52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
@@ -1381,6 +1389,51 @@
 
       if (img.complete && img.naturalWidth) start();
       else img.addEventListener('load', start);
+    })();
+
+    // ── Scroll-scrubbed staircase ──
+    // Each row slides in from the right as it rises through the viewport and
+    // slides back out when you scroll up, so the list answers to the reader's
+    // movement in both directions rather than snapping into place once. Rows
+    // stagger on their own because each one reaches the trigger band later.
+    (function () {
+      var items = Array.prototype.slice.call(document.querySelectorAll('.for-item'));
+      if (!items.length) return;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        items.forEach(function (el) { el.style.opacity = 1; el.style.transform = 'none'; });
+        return;
+      }
+
+      var OFFSET = 140;   // how far right a row waits before it comes in
+      var queued = false;
+
+      function update() {
+        queued = false;
+        var vh = window.innerHeight;
+        var from = vh * 0.94;   // starts moving once its top is here
+        var to = vh * 0.58;     // fully home by here
+
+        for (var i = 0; i < items.length; i++) {
+          var r = items[i].getBoundingClientRect();
+          var p = (from - r.top) / (from - to);
+          p = p < 0 ? 0 : p > 1 ? 1 : p;
+
+          var e = 1 - Math.pow(1 - p, 3);   // ease out, so it settles rather than arrives
+          items[i].style.opacity = p;
+          items[i].style.transform = 'translateX(' + ((1 - e) * OFFSET).toFixed(1) + 'px)';
+        }
+      }
+
+      function onScroll() {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(update);
+      }
+
+      update();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
     })();
 
     // ── Scroll-typed closing line ──
