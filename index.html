@@ -211,6 +211,15 @@
       .live-dot { animation: none; }
     }
 
+    /* The opening clause carries the promise, so it runs half again the size of
+       the two that follow. em keeps that ratio through every breakpoint. */
+    .hero-lead-line {
+      font-size: 1.5em;
+      line-height: 1.05;
+      display: inline-block;
+      margin-bottom: 0.06em;
+    }
+
     /* 3 · headline — the loudest thing on the page */
     h1.hero-title {
       font-size: 56px;
@@ -956,7 +965,7 @@
 
     <!-- 3 · the headline -->
     <h1 class="hero-title reveal">
-      איך לפרוץ כמעצב של העולם החדש,<br class="wide-only" />
+      <span class="hero-lead-line">איך לפרוץ כמעצב של העולם החדש,</span><br class="wide-only" />
       להעלות קוד חי ראשון תוך 60 דקות,<br class="wide-only" />
       ולהפוך לנכס הכי חזק בצוות
     </h1>
