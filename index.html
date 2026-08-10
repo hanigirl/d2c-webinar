@@ -157,8 +157,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 0 32px 72px;
-      margin-top: calc(-1 * clamp(130px, 21vw, 280px));
+      padding: 0 32px 56px;
       z-index: 2;
       position: relative;
       overflow: visible;
@@ -298,7 +297,7 @@
        and a drifting pixel field
     ═══════════════════════════════════════════════ */
     .hero-visual {
-      padding: 44px 32px 0;
+      padding: 16px 32px 0;
       overflow-x: clip;
       position: relative;
       z-index: 1;
@@ -342,88 +341,11 @@
     .visual-photo-wrap.is-pixelated .visual-canvas { display: block; }
     .visual-photo-wrap.is-pixelated .visual-photo { visibility: hidden; }
 
-    /* Rim glow behind the cutout so they don't float flat on the black. */
-    .visual-stage::before {
-      content: '';
-      position: absolute;
-      left: 50%;
-      top: 8%;
-      width: min(1000px, 94%);
-      height: 88%;
-      transform: translateX(-50%);
-      background:
-        radial-gradient(50% 50% at 50% 45%, rgba(150, 90, 255, 0.28), transparent 72%),
-        radial-gradient(42% 44% at 62% 38%, rgba(255, 43, 155, 0.20), transparent 72%);
-      filter: blur(30px);
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    /* ── Floating tool tiles ── */
-    .tiles { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
-
-    .tile {
-      position: absolute;
-      width: 74px;
-      height: 74px;
-      border-radius: 20px;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
-      animation: tile-float ease-in-out infinite;
-    }
-
-    .tile img, .tile svg { width: 38px; height: 38px; display: block; }
-    .tile img { border-radius: 9px; }
-
-    /* Two a side, and staggered so no two ever bob in lockstep. */
-    .tile-1 { inset-inline-start: 2%;  top: 8%;  animation-duration: 6.5s; animation-delay: 0s; }
-    .tile-2 { inset-inline-start: -2%; top: 42%; animation-duration: 8.2s; animation-delay: -2.4s; }
-    .tile-3 { inset-inline-end: 1%;    top: 16%; animation-duration: 7.1s; animation-delay: -4.1s; }
-    .tile-4 { inset-inline-end: -2%;   top: 54%; animation-duration: 9.0s; animation-delay: -6.3s; }
-
-    @keyframes tile-float {
-      0%, 100% { transform: translateY(0)     rotate(-2deg); }
-      50%      { transform: translateY(-18px) rotate(2deg); }
-    }
-
-    /* ── Drifting pixels ── */
-    .pixels { position: absolute; inset: -6% 0; z-index: 1; pointer-events: none; }
-
-    .pixels i {
-      position: absolute;
-      display: block;
-      border-radius: 1px;
-      animation-name: pixel-drift;
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: infinite;
-      will-change: transform, opacity;
-    }
-
-    @keyframes pixel-drift {
-      0%   { transform: translate(0, 0) scale(1); }
-      25%  { transform: translate(6px, -18px) scale(1.25); }
-      50%  { transform: translate(-4px, -34px) scale(0.85); }
-      75%  { transform: translate(-9px, -16px) scale(1.1); }
-      100% { transform: translate(0, 0) scale(1); }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .tile, .pixels i { animation: none; }
     }
 
     @media (max-width: 600px) {
       .hero-visual { padding: 26px 16px 0; }
       .live-strip { font-size: 15px; }
-      .tile { width: 52px; height: 52px; border-radius: 15px; }
-      .tile img, .tile svg { width: 26px; height: 26px; }
-      .tile-1 { inset-inline-start: 0; }
-      .tile-2 { inset-inline-start: -3%; }
-      .tile-3 { inset-inline-start: 1%; }
     }
 
     /* ═══════════════════════════════════════════════
@@ -891,73 +813,6 @@
     <span>הזמנה למשדר לייב</span>
   </header>
 
-  <!-- ═══════════════════ HERO VISUAL ═══════════════════ -->
-  <section class="hero-visual">
-    <div class="visual-stage">
-    <div class="pixels" aria-hidden="true">
-      <i style="left:32.4%;top:15.1%;width:7px;height:7px;animation-duration:7.7s;animation-delay:-7.4s;opacity:0.47;border:1px solid #ff2b9b;"></i>
-      <i style="left:5.8%;top:50.7%;width:3px;height:3px;animation-duration:10.9s;animation-delay:-14.9s;opacity:0.3;background:#ff2b9b;"></i>
-      <i style="left:42.5%;top:82.7%;width:3px;height:3px;animation-duration:12.7s;animation-delay:-6.7s;opacity:0.29;background:#c04cff;"></i>
-      <i style="left:58.6%;top:5.0%;width:4px;height:4px;animation-duration:12.0s;animation-delay:-13.9s;opacity:0.5;background:#ff2b9b;"></i>
-      <i style="left:54.1%;top:57.1%;width:6px;height:6px;animation-duration:8.6s;animation-delay:-6.7s;opacity:0.63;background:#8f6bff;"></i>
-      <i style="left:37.2%;top:54.8%;width:3px;height:3px;animation-duration:7.5s;animation-delay:-12.7s;opacity:0.66;border:1px solid #ff7ac4;"></i>
-      <i style="left:42.8%;top:31.4%;width:6px;height:6px;animation-duration:10.3s;animation-delay:-12.0s;opacity:0.36;background:#ffffff;"></i>
-      <i style="left:78.0%;top:8.2%;width:4px;height:4px;animation-duration:11.5s;animation-delay:-10.5s;opacity:0.52;background:#ff7ac4;"></i>
-      <i style="left:60.9%;top:7.3%;width:6px;height:6px;animation-duration:8.5s;animation-delay:-10.5s;opacity:0.81;background:#ffffff;"></i>
-      <i style="left:42.2%;top:96.2%;width:3px;height:3px;animation-duration:12.2s;animation-delay:-2.0s;opacity:0.44;background:#ff7ac4;"></i>
-      <i style="left:69.5%;top:59.4%;width:6px;height:6px;animation-duration:7.6s;animation-delay:-14.5s;opacity:0.41;border:1px solid #ffffff;"></i>
-      <i style="left:69.7%;top:6.5%;width:7px;height:7px;animation-duration:9.8s;animation-delay:-6.8s;opacity:0.66;background:#8f6bff;"></i>
-      <i style="left:44.6%;top:71.7%;width:7px;height:7px;animation-duration:7.2s;animation-delay:-8.6s;opacity:0.35;background:#7b5cff;"></i>
-      <i style="left:11.7%;top:5.9%;width:9px;height:9px;animation-duration:8.2s;animation-delay:-12.0s;opacity:0.48;background:#7b5cff;"></i>
-      <i style="left:87.1%;top:8.1%;width:5px;height:5px;animation-duration:11.9s;animation-delay:-1.9s;opacity:0.74;background:#ffffff;"></i>
-      <i style="left:86.4%;top:27.8%;width:5px;height:5px;animation-duration:13.1s;animation-delay:-9.9s;opacity:0.39;border:1px solid #7b5cff;"></i>
-      <i style="left:8.3%;top:15.1%;width:7px;height:7px;animation-duration:7.1s;animation-delay:-2.7s;opacity:0.36;background:#c04cff;"></i>
-      <i style="left:28.2%;top:14.6%;width:6px;height:6px;animation-duration:12.5s;animation-delay:-10.9s;opacity:0.33;background:#7b5cff;"></i>
-      <i style="left:85.9%;top:95.0%;width:7px;height:7px;animation-duration:13.7s;animation-delay:-8.7s;opacity:0.77;background:#8f6bff;"></i>
-      <i style="left:95.2%;top:68.1%;width:6px;height:6px;animation-duration:10.6s;animation-delay:-9.7s;opacity:0.54;background:#ffffff;"></i>
-      <i style="left:40.0%;top:19.1%;width:4px;height:4px;animation-duration:8.5s;animation-delay:-10.6s;opacity:0.28;border:1px solid #ffffff;"></i>
-      <i style="left:0.0%;top:15.1%;width:3px;height:3px;animation-duration:12.5s;animation-delay:-14.9s;opacity:0.37;background:#7b5cff;"></i>
-      <i style="left:37.6%;top:63.4%;width:4px;height:4px;animation-duration:10.3s;animation-delay:-14.0s;opacity:0.76;background:#ff7ac4;"></i>
-      <i style="left:99.3%;top:46.6%;width:5px;height:5px;animation-duration:7.8s;animation-delay:-14.4s;opacity:0.46;background:#7b5cff;"></i>
-      <i style="left:26.5%;top:82.9%;width:4px;height:4px;animation-duration:7.2s;animation-delay:-0.8s;opacity:0.57;background:#ff7ac4;"></i>
-      <i style="left:14.7%;top:54.3%;width:3px;height:3px;animation-duration:9.7s;animation-delay:-5.7s;opacity:0.3;border:1px solid #ff7ac4;"></i>
-      <i style="left:84.5%;top:51.8%;width:4px;height:4px;animation-duration:13.9s;animation-delay:-7.5s;opacity:0.72;background:#7b5cff;"></i>
-      <i style="left:33.0%;top:22.3%;width:9px;height:9px;animation-duration:14.3s;animation-delay:-2.9s;opacity:0.69;background:#c04cff;"></i>
-      <i style="left:22.7%;top:51.8%;width:4px;height:4px;animation-duration:7.3s;animation-delay:-15.6s;opacity:0.42;background:#8f6bff;"></i>
-      <i style="left:25.9%;top:69.3%;width:4px;height:4px;animation-duration:14.3s;animation-delay:-4.4s;opacity:0.46;background:#ffffff;"></i>
-      <i style="left:97.5%;top:8.1%;width:3px;height:3px;animation-duration:11.2s;animation-delay:-10.6s;opacity:0.54;border:1px solid #c04cff;"></i>
-      <i style="left:98.5%;top:61.0%;width:3px;height:3px;animation-duration:15.2s;animation-delay:-10.5s;opacity:0.64;background:#ffffff;"></i>
-      <i style="left:83.5%;top:12.0%;width:5px;height:5px;animation-duration:13.8s;animation-delay:-8.4s;opacity:0.36;background:#8f6bff;"></i>
-      <i style="left:78.9%;top:33.3%;width:9px;height:9px;animation-duration:10.6s;animation-delay:-9.6s;opacity:0.82;background:#8f6bff;"></i>
-      <i style="left:72.5%;top:17.0%;width:4px;height:4px;animation-duration:8.4s;animation-delay:-1.5s;opacity:0.73;background:#ff2b9b;"></i>
-      <i style="left:14.6%;top:82.7%;width:5px;height:5px;animation-duration:15.4s;animation-delay:-13.5s;opacity:0.58;border:1px solid #8f6bff;"></i>
-      <i style="left:2.1%;top:79.9%;width:7px;height:7px;animation-duration:7.9s;animation-delay:-4.0s;opacity:0.33;background:#8f6bff;"></i>
-      <i style="left:98.7%;top:19.5%;width:9px;height:9px;animation-duration:7.3s;animation-delay:-12.6s;opacity:0.55;background:#c04cff;"></i>
-      <i style="left:76.4%;top:32.6%;width:6px;height:6px;animation-duration:14.5s;animation-delay:-15.0s;opacity:0.69;background:#ffffff;"></i>
-      <i style="left:89.8%;top:66.2%;width:9px;height:9px;animation-duration:10.8s;animation-delay:-1.3s;opacity:0.55;background:#ff7ac4;"></i>
-      <i style="left:53.2%;top:52.4%;width:3px;height:3px;animation-duration:14.0s;animation-delay:-6.3s;opacity:0.72;border:1px solid #ffffff;"></i>
-      <i style="left:15.0%;top:14.2%;width:6px;height:6px;animation-duration:8.1s;animation-delay:-15.0s;opacity:0.66;background:#8f6bff;"></i>
-      <i style="left:53.1%;top:48.2%;width:9px;height:9px;animation-duration:14.9s;animation-delay:-15.1s;opacity:0.36;background:#ff2b9b;"></i>
-      <i style="left:4.2%;top:9.8%;width:5px;height:5px;animation-duration:7.3s;animation-delay:-1.7s;opacity:0.29;background:#ff7ac4;"></i>
-      <i style="left:32.6%;top:97.3%;width:6px;height:6px;animation-duration:8.8s;animation-delay:-11.6s;opacity:0.55;background:#ff7ac4;"></i>
-      <i style="left:80.7%;top:50.8%;width:4px;height:4px;animation-duration:11.7s;animation-delay:-2.0s;opacity:0.81;border:1px solid #8f6bff;"></i>
-    </div>
-
-      <div class="visual-photo-wrap">
-        <img class="visual-photo" src="assets/hosts.png"
-             alt="חני בוסקילה ודניאל בוארון" />
-        <canvas class="visual-canvas" aria-hidden="true"></canvas>
-      </div>
-
-      <div class="tiles" aria-hidden="true">
-        <span class="tile tile-1"><img src="assets/claude-logo.svg" alt="" /></span>
-        <span class="tile tile-2"><svg viewBox="0 0 16 16" fill="#fff" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></span>
-        <span class="tile tile-3"><svg viewBox="0 0 38 57" fill="#fff" aria-hidden="true"><path d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z"/><path d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 0 1-19 0z"/><path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z"/><path d="M0 9.5A9.5 9.5 0 0 1 9.5 0H19v19H9.5A9.5 9.5 0 0 1 0 9.5z"/><path d="M0 28.5A9.5 9.5 0 0 1 9.5 19H19v19H9.5A9.5 9.5 0 0 1 0 28.5z"/></svg></span>
-        <span class="tile tile-4"><img src="assets/cursor-logo.png" alt="" /></span>
-      </div>
-    </div>
-  </section>
-
   <!-- ═══════════════════ HERO ═══════════════════ -->
   <section class="hero">
     <!-- 2 · qualifier — sits right above the headline -->
@@ -1015,6 +870,20 @@
     </div>
   </section>
 
+
+  <!-- ═══════════════════ HERO VISUAL ═══════════════════ -->
+  <section class="hero-visual">
+    <div class="visual-stage">
+
+      <div class="visual-photo-wrap">
+        <img class="visual-photo" src="assets/hosts.png"
+             alt="חני בוסקילה ודניאל בוארון" />
+        <canvas class="visual-canvas" aria-hidden="true"></canvas>
+      </div>
+
+
+    </div>
+  </section>
 
   <!-- ═══════════════════ PROMISE ═══════════════════ -->
   <section class="promise">
