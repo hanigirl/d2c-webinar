@@ -157,7 +157,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 0 32px 56px;
+      padding: 40px 32px 56px;
       z-index: 2;
       position: relative;
       overflow: visible;
@@ -210,20 +210,11 @@
       .live-dot { animation: none; }
     }
 
-    /* The opening clause carries the promise, so it runs half again the size of
-       the two that follow. em keeps that ratio through every breakpoint. */
-    .hero-lead-line {
-      font-size: 1.5em;
-      line-height: 1.05;
-      display: inline-block;
-      margin-bottom: 0.06em;
-    }
-
     /* 3 · headline — the loudest thing on the page */
     h1.hero-title {
-      font-size: 56px;
+      font-size: 70px;
       font-weight: 700;
-      line-height: 1.12;
+      line-height: 1.14;
       letter-spacing: -0.025em;
       max-width: 100%;
       margin-bottom: 36px;
@@ -298,6 +289,7 @@
     ═══════════════════════════════════════════════ */
     .hero-visual {
       padding: 16px 32px 0;
+      margin-bottom: -7%;
       overflow-x: clip;
       position: relative;
       z-index: 1;
@@ -311,6 +303,82 @@
       justify-content: center;
     }
 
+    /* ── Floating tool tiles ── */
+    .hero-deco {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .tile {
+      position: absolute;
+      width: 74px;
+      height: 74px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+      animation: tile-float ease-in-out infinite;
+    }
+
+    .tile img, .tile svg { width: 38px; height: 38px; display: block; }
+    .tile img { border-radius: 9px; }
+
+    /* Two a side, and staggered so no two ever bob in lockstep. */
+    .tile-1 { inset-inline-start: 4%;  top: 12%; animation-duration: 6.5s; animation-delay: 0s; }
+    .tile-2 { inset-inline-start: 1%;  top: 52%; animation-duration: 8.2s; animation-delay: -2.4s; }
+    .tile-3 { inset-inline-end: 4%;    top: 20%; animation-duration: 7.1s; animation-delay: -4.1s; }
+    .tile-4 { inset-inline-end: 1%;    top: 60%; animation-duration: 9.0s; animation-delay: -6.3s; }
+
+    @keyframes tile-float {
+      0%, 100% { transform: translateY(0)     rotate(-2deg); }
+      50%      { transform: translateY(-18px) rotate(2deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tile { animation: none; }
+    }
+
+    @media (max-width: 900px) {
+      .tile { width: 56px; height: 56px; border-radius: 16px; }
+      .tile img, .tile svg { width: 28px; height: 28px; }
+    }
+
+    @media (max-width: 600px) {
+      .hero-deco .tile { display: none; }
+    }
+
+    /* ── Drifting pixels ── */
+    .pixels { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+
+    .pixels i {
+      position: absolute;
+      display: block;
+      border-radius: 1px;
+      animation-name: pixel-drift;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+      will-change: transform, opacity;
+    }
+
+    @keyframes pixel-drift {
+      0%   { transform: translate(0, 0) scale(1); }
+      25%  { transform: translate(6px, -18px) scale(1.25); }
+      50%  { transform: translate(-4px, -34px) scale(0.85); }
+      75%  { transform: translate(-9px, -16px) scale(1.1); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pixels i { animation: none; }
+    }
+
     .visual-photo-wrap {
       position: relative;
       z-index: 2;
@@ -318,8 +386,8 @@
       line-height: 0;
       /* Their bodies are cut by the frame — fade the last stretch so it reads
          as fading out rather than being sliced off. */
-      -webkit-mask-image: linear-gradient(to bottom, #000 44%, rgba(0,0,0,0.55) 68%, rgba(0,0,0,0.18) 84%, transparent 96%);
-      mask-image: linear-gradient(to bottom, #000 44%, rgba(0,0,0,0.55) 68%, rgba(0,0,0,0.18) 84%, transparent 96%);
+      -webkit-mask-image: linear-gradient(to bottom, #000 72%, rgba(0,0,0,0.55) 88%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 72%, rgba(0,0,0,0.55) 88%, transparent 100%);
     }
 
     .visual-photo {
@@ -772,7 +840,7 @@
     @media (max-width: 900px) {
       .learn-grid, .hosts-grid { grid-template-columns: 1fr; }
       .for-item { --step: 0 !important; max-width: 100%; }
-      h1.hero-title { font-size: 44px; }
+      h1.hero-title { font-size: 52px; }
       .wide-only { display: none; }
       h2.section-title { font-size: 40px; }
       .hero-sub { font-size: 24px; }
@@ -784,7 +852,7 @@
     @media (max-width: 600px) {
       .wrap { padding-inline: 20px; }
       .hero { padding: 80px 20px 72px; min-height: auto; }
-      h1.hero-title { font-size: 34px; margin-bottom: 28px; }
+      h1.hero-title { font-size: 38px; margin-bottom: 28px; }
       h2.section-title { font-size: 31px; }
       .hero-qualifier { margin-bottom: 0; }
       .hero-sub { font-size: 21px; }
@@ -815,6 +883,53 @@
 
   <!-- ═══════════════════ HERO ═══════════════════ -->
   <section class="hero">
+    <div class="hero-deco" aria-hidden="true">
+      <div class="pixels">
+        <i style="left:90.8%;top:91.2%;width:3px;height:3px;animation-duration:12.3s;animation-delay:-9.2s;opacity:0.47;border:1px solid #c04cff;"></i>
+        <i style="left:71.7%;top:27.1%;width:3px;height:4px;animation-duration:12.6s;animation-delay:-1.6s;opacity:0.27;background:#8f6bff;"></i>
+        <i style="left:49.8%;top:3.8%;width:7px;height:7px;animation-duration:10.9s;animation-delay:-3.7s;opacity:0.32;background:#ff2b9b;"></i>
+        <i style="left:58.6%;top:63.8%;width:6px;height:4px;animation-duration:15.7s;animation-delay:-10.2s;opacity:0.58;background:#7b5cff;"></i>
+        <i style="left:95.0%;top:28.4%;width:4px;height:6px;animation-duration:7.8s;animation-delay:-8.4s;opacity:0.56;background:#ff7ac4;"></i>
+        <i style="left:78.0%;top:65.5%;width:4px;height:4px;animation-duration:14.2s;animation-delay:-7.5s;opacity:0.54;border:1px solid #ff7ac4;"></i>
+        <i style="left:20.8%;top:12.7%;width:3px;height:5px;animation-duration:7.4s;animation-delay:-11.6s;opacity:0.49;background:#ff7ac4;"></i>
+        <i style="left:33.8%;top:36.7%;width:4px;height:6px;animation-duration:9.7s;animation-delay:-3.6s;opacity:0.48;background:#7b5cff;"></i>
+        <i style="left:16.4%;top:60.2%;width:3px;height:7px;animation-duration:14.2s;animation-delay:-8.1s;opacity:0.38;background:#c04cff;"></i>
+        <i style="left:90.2%;top:57.7%;width:5px;height:4px;animation-duration:11.0s;animation-delay:-15.5s;opacity:0.52;background:#ffffff;"></i>
+        <i style="left:4.2%;top:78.1%;width:7px;height:3px;animation-duration:15.8s;animation-delay:-3.1s;opacity:0.68;border:1px solid #ff7ac4;"></i>
+        <i style="left:92.7%;top:43.8%;width:3px;height:4px;animation-duration:7.1s;animation-delay:-3.4s;opacity:0.46;background:#ff2b9b;"></i>
+        <i style="left:9.3%;top:45.8%;width:4px;height:5px;animation-duration:15.6s;animation-delay:-12.5s;opacity:0.27;background:#ff7ac4;"></i>
+        <i style="left:64.4%;top:66.9%;width:6px;height:4px;animation-duration:9.3s;animation-delay:-9.3s;opacity:0.65;background:#ffffff;"></i>
+        <i style="left:75.1%;top:63.7%;width:5px;height:4px;animation-duration:15.1s;animation-delay:-5.0s;opacity:0.42;background:#8f6bff;"></i>
+        <i style="left:94.2%;top:86.4%;width:7px;height:4px;animation-duration:11.9s;animation-delay:-9.2s;opacity:0.36;border:1px solid #ff7ac4;"></i>
+        <i style="left:60.5%;top:6.8%;width:4px;height:3px;animation-duration:7.2s;animation-delay:-13.8s;opacity:0.68;background:#8f6bff;"></i>
+        <i style="left:82.2%;top:25.3%;width:7px;height:3px;animation-duration:10.0s;animation-delay:-5.0s;opacity:0.27;background:#ff7ac4;"></i>
+        <i style="left:93.9%;top:77.2%;width:7px;height:4px;animation-duration:7.0s;animation-delay:-10.0s;opacity:0.6;background:#c04cff;"></i>
+        <i style="left:73.9%;top:39.8%;width:7px;height:3px;animation-duration:8.6s;animation-delay:-8.8s;opacity:0.42;background:#ff2b9b;"></i>
+        <i style="left:42.3%;top:28.1%;width:6px;height:7px;animation-duration:15.9s;animation-delay:-4.5s;opacity:0.31;border:1px solid #ff7ac4;"></i>
+        <i style="left:30.6%;top:86.5%;width:3px;height:4px;animation-duration:14.9s;animation-delay:-2.2s;opacity:0.46;background:#ff2b9b;"></i>
+        <i style="left:66.6%;top:58.9%;width:4px;height:7px;animation-duration:9.9s;animation-delay:-10.4s;opacity:0.37;background:#7b5cff;"></i>
+        <i style="left:17.4%;top:6.0%;width:7px;height:5px;animation-duration:13.8s;animation-delay:-1.9s;opacity:0.48;background:#8f6bff;"></i>
+        <i style="left:10.6%;top:22.4%;width:4px;height:4px;animation-duration:11.5s;animation-delay:-14.2s;opacity:0.44;background:#ff2b9b;"></i>
+        <i style="left:28.6%;top:74.3%;width:3px;height:3px;animation-duration:9.3s;animation-delay:-2.4s;opacity:0.34;border:1px solid #ff7ac4;"></i>
+        <i style="left:62.9%;top:6.0%;width:3px;height:4px;animation-duration:8.8s;animation-delay:-7.0s;opacity:0.52;background:#ff2b9b;"></i>
+        <i style="left:19.3%;top:49.9%;width:6px;height:7px;animation-duration:10.3s;animation-delay:-0.2s;opacity:0.52;background:#8f6bff;"></i>
+        <i style="left:64.9%;top:18.0%;width:3px;height:7px;animation-duration:8.6s;animation-delay:-15.7s;opacity:0.51;background:#c04cff;"></i>
+        <i style="left:91.5%;top:29.7%;width:7px;height:4px;animation-duration:12.1s;animation-delay:-3.7s;opacity:0.61;background:#ff7ac4;"></i>
+        <i style="left:74.9%;top:11.6%;width:3px;height:4px;animation-duration:10.2s;animation-delay:-13.4s;opacity:0.32;border:1px solid #ffffff;"></i>
+        <i style="left:97.2%;top:73.2%;width:4px;height:6px;animation-duration:12.3s;animation-delay:-1.0s;opacity:0.54;background:#ff7ac4;"></i>
+        <i style="left:64.5%;top:72.0%;width:7px;height:4px;animation-duration:11.1s;animation-delay:-5.4s;opacity:0.68;background:#8f6bff;"></i>
+        <i style="left:14.4%;top:37.7%;width:4px;height:3px;animation-duration:11.4s;animation-delay:-10.4s;opacity:0.32;background:#8f6bff;"></i>
+        <i style="left:53.4%;top:21.8%;width:5px;height:5px;animation-duration:7.5s;animation-delay:-10.9s;opacity:0.43;background:#c04cff;"></i>
+        <i style="left:58.6%;top:41.0%;width:4px;height:4px;animation-duration:7.3s;animation-delay:-11.3s;opacity:0.61;border:1px solid #ffffff;"></i>
+        <i style="left:80.9%;top:56.1%;width:3px;height:6px;animation-duration:15.1s;animation-delay:-5.9s;opacity:0.61;background:#c04cff;"></i>
+        <i style="left:90.2%;top:94.2%;width:7px;height:5px;animation-duration:15.8s;animation-delay:-8.7s;opacity:0.22;background:#8f6bff;"></i>
+      </div>
+      <span class="tile tile-1"><img src="assets/claude-logo.svg" alt="" /></span>
+      <span class="tile tile-2"><svg viewBox="0 0 16 16" fill="#fff" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></span>
+      <span class="tile tile-3"><svg viewBox="0 0 38 57" fill="#fff" aria-hidden="true"><path d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z"/><path d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 0 1-19 0z"/><path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z"/><path d="M0 9.5A9.5 9.5 0 0 1 9.5 0H19v19H9.5A9.5 9.5 0 0 1 0 9.5z"/><path d="M0 28.5A9.5 9.5 0 0 1 9.5 19H19v19H9.5A9.5 9.5 0 0 1 0 28.5z"/></svg></span>
+      <span class="tile tile-4"><img src="assets/cursor-logo.png" alt="" /></span>
+    </div>
+
     <!-- 2 · qualifier — sits right above the headline -->
     <p class="hero-qualifier reveal">
       למעצבי דיגיטל שרואים איך ה-AI משנה את הכללים, ומבינים שרק לעצב בפיגמה זה כבר פשוט לא מספיק ב-2026…
@@ -822,7 +937,7 @@
 
     <!-- 3 · the headline -->
     <h1 class="hero-title reveal">
-      <span class="hero-lead-line">איך לפרוץ כמעצב של העולם החדש</span><br class="wide-only" />
+      איך לפרוץ כמעצב של העולם החדש<br class="wide-only" />
       להעלות קוד חי ראשון תוך 60 דקות,<br class="wide-only" />
       ולהפוך לנכס הכי חזק בצוות
     </h1>
@@ -875,6 +990,50 @@
   <section class="hero-visual">
     <div class="visual-stage">
 
+      <div class="pixels" aria-hidden="true">
+        <i style="left:45.2%;top:56.0%;width:9px;height:5px;animation-duration:11.1s;animation-delay:-2.3s;opacity:0.35;border:1px solid #ff7ac4;"></i>
+        <i style="left:47.6%;top:61.4%;width:4px;height:3px;animation-duration:11.0s;animation-delay:-13.7s;opacity:0.55;background:#8f6bff;"></i>
+        <i style="left:63.4%;top:59.5%;width:5px;height:5px;animation-duration:12.9s;animation-delay:-6.2s;opacity:0.34;background:#ff2b9b;"></i>
+        <i style="left:83.2%;top:6.3%;width:3px;height:4px;animation-duration:14.9s;animation-delay:-6.4s;opacity:0.68;background:#7b5cff;"></i>
+        <i style="left:44.1%;top:84.2%;width:6px;height:4px;animation-duration:12.8s;animation-delay:-8.0s;opacity:0.61;background:#ffffff;"></i>
+        <i style="left:65.5%;top:40.7%;width:6px;height:9px;animation-duration:7.7s;animation-delay:-11.9s;opacity:0.67;border:1px solid #ff7ac4;"></i>
+        <i style="left:28.9%;top:7.0%;width:9px;height:3px;animation-duration:10.6s;animation-delay:-2.5s;opacity:0.46;background:#ff2b9b;"></i>
+        <i style="left:84.7%;top:0.1%;width:4px;height:3px;animation-duration:11.2s;animation-delay:-0.3s;opacity:0.47;background:#ff2b9b;"></i>
+        <i style="left:56.6%;top:19.8%;width:7px;height:4px;animation-duration:10.0s;animation-delay:-11.0s;opacity:0.26;background:#ffffff;"></i>
+        <i style="left:75.8%;top:11.8%;width:4px;height:7px;animation-duration:7.9s;animation-delay:-15.0s;opacity:0.69;background:#c04cff;"></i>
+        <i style="left:68.2%;top:18.8%;width:6px;height:4px;animation-duration:15.9s;animation-delay:-3.7s;opacity:0.48;border:1px solid #ffffff;"></i>
+        <i style="left:11.7%;top:42.1%;width:4px;height:3px;animation-duration:9.4s;animation-delay:-0.5s;opacity:0.69;background:#7b5cff;"></i>
+        <i style="left:99.8%;top:2.0%;width:4px;height:5px;animation-duration:16.0s;animation-delay:-6.4s;opacity:0.57;background:#ff2b9b;"></i>
+        <i style="left:98.9%;top:21.3%;width:4px;height:3px;animation-duration:14.0s;animation-delay:-10.7s;opacity:0.41;background:#ff2b9b;"></i>
+        <i style="left:7.4%;top:20.9%;width:7px;height:4px;animation-duration:7.1s;animation-delay:-10.1s;opacity:0.59;background:#c04cff;"></i>
+        <i style="left:95.9%;top:48.4%;width:6px;height:4px;animation-duration:14.8s;animation-delay:-13.1s;opacity:0.33;border:1px solid #c04cff;"></i>
+        <i style="left:81.8%;top:24.9%;width:4px;height:4px;animation-duration:13.7s;animation-delay:-1.0s;opacity:0.36;background:#ffffff;"></i>
+        <i style="left:88.2%;top:60.4%;width:5px;height:3px;animation-duration:7.9s;animation-delay:-15.4s;opacity:0.78;background:#c04cff;"></i>
+        <i style="left:74.0%;top:39.2%;width:5px;height:9px;animation-duration:15.1s;animation-delay:-8.1s;opacity:0.54;background:#8f6bff;"></i>
+        <i style="left:97.7%;top:12.6%;width:5px;height:6px;animation-duration:12.9s;animation-delay:-6.1s;opacity:0.29;background:#c04cff;"></i>
+        <i style="left:91.7%;top:20.4%;width:3px;height:3px;animation-duration:9.4s;animation-delay:-8.9s;opacity:0.28;border:1px solid #c04cff;"></i>
+        <i style="left:28.2%;top:53.1%;width:4px;height:3px;animation-duration:10.3s;animation-delay:-1.7s;opacity:0.79;background:#8f6bff;"></i>
+        <i style="left:73.3%;top:52.2%;width:4px;height:6px;animation-duration:7.3s;animation-delay:-15.7s;opacity:0.75;background:#8f6bff;"></i>
+        <i style="left:31.2%;top:3.4%;width:6px;height:7px;animation-duration:7.7s;animation-delay:-14.9s;opacity:0.42;background:#c04cff;"></i>
+        <i style="left:99.9%;top:7.5%;width:6px;height:4px;animation-duration:13.6s;animation-delay:-1.6s;opacity:0.66;background:#8f6bff;"></i>
+        <i style="left:13.0%;top:96.3%;width:4px;height:4px;animation-duration:7.8s;animation-delay:-8.4s;opacity:0.29;border:1px solid #ffffff;"></i>
+        <i style="left:94.4%;top:3.0%;width:5px;height:6px;animation-duration:7.1s;animation-delay:-5.4s;opacity:0.46;background:#ff2b9b;"></i>
+        <i style="left:60.9%;top:8.0%;width:7px;height:3px;animation-duration:15.9s;animation-delay:-1.9s;opacity:0.65;background:#ffffff;"></i>
+        <i style="left:93.4%;top:69.4%;width:5px;height:5px;animation-duration:11.2s;animation-delay:-7.3s;opacity:0.54;background:#ff7ac4;"></i>
+        <i style="left:3.0%;top:60.1%;width:5px;height:3px;animation-duration:9.1s;animation-delay:-4.8s;opacity:0.52;background:#ff7ac4;"></i>
+        <i style="left:66.0%;top:48.6%;width:3px;height:4px;animation-duration:9.7s;animation-delay:-5.1s;opacity:0.36;border:1px solid #c04cff;"></i>
+        <i style="left:75.4%;top:34.3%;width:5px;height:5px;animation-duration:15.0s;animation-delay:-10.8s;opacity:0.62;background:#c04cff;"></i>
+        <i style="left:63.4%;top:80.4%;width:9px;height:4px;animation-duration:14.9s;animation-delay:-9.8s;opacity:0.57;background:#7b5cff;"></i>
+        <i style="left:21.0%;top:13.5%;width:4px;height:9px;animation-duration:15.1s;animation-delay:-15.4s;opacity:0.29;background:#7b5cff;"></i>
+        <i style="left:82.2%;top:11.3%;width:5px;height:4px;animation-duration:15.3s;animation-delay:-2.7s;opacity:0.46;background:#ff7ac4;"></i>
+        <i style="left:49.4%;top:31.5%;width:9px;height:9px;animation-duration:15.8s;animation-delay:-8.8s;opacity:0.29;border:1px solid #ff2b9b;"></i>
+        <i style="left:27.8%;top:60.8%;width:7px;height:7px;animation-duration:9.5s;animation-delay:-10.3s;opacity:0.61;background:#ff7ac4;"></i>
+        <i style="left:1.9%;top:13.6%;width:5px;height:4px;animation-duration:7.2s;animation-delay:-2.7s;opacity:0.38;background:#c04cff;"></i>
+        <i style="left:79.7%;top:98.4%;width:3px;height:5px;animation-duration:8.0s;animation-delay:-7.4s;opacity:0.6;background:#7b5cff;"></i>
+        <i style="left:95.8%;top:68.4%;width:4px;height:9px;animation-duration:11.3s;animation-delay:-13.1s;opacity:0.26;background:#ffffff;"></i>
+        <i style="left:53.5%;top:3.6%;width:4px;height:4px;animation-duration:14.0s;animation-delay:-7.4s;opacity:0.77;border:1px solid #ff7ac4;"></i>
+        <i style="left:61.4%;top:75.6%;width:5px;height:9px;animation-duration:14.1s;animation-delay:-1.5s;opacity:0.3;background:#8f6bff;"></i>
+      </div>
       <div class="visual-photo-wrap">
         <img class="visual-photo" src="assets/hosts.png"
              alt="חני בוסקילה ודניאל בוארון" />
