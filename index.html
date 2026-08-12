@@ -653,6 +653,19 @@
       transform: scaleX(-1);
     }
 
+    /* Hand-drawn underline. Painted as a background rather than a pseudo-element
+       so a phrase that wraps gets the stroke on each line instead of one bar
+       stretched across the gap. */
+    .scribble {
+      background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20300%2022%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M5%2C14%20C48%2C6%2092%2C18%20136%2C11%20C180%2C4%20222%2C17%20264%2C9%20C278%2C6.5%20288%2C10%20296%2C8%22%20fill%3D%22none%22%20stroke%3D%22%23ff2b9b%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M9%2C18%20C55%2C11%2096%2C21%20140%2C15%20C186%2C9%20226%2C20%20268%2C13%22%20fill%3D%22none%22%20stroke%3D%22%23ff2b9b%22%20stroke-width%3D%222.4%22%20stroke-linecap%3D%22round%22%20opacity%3D%220.55%22%2F%3E%3C%2Fsvg%3E");
+      background-repeat: no-repeat;
+      background-position: 0 100%;
+      background-size: 100% 0.34em;
+      padding-bottom: 0.30em;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
     /* ═══════════════════════════════════════════════
        LIGHT SECTION — the one break in the dark page
     ═══════════════════════════════════════════════ */
@@ -1066,9 +1079,9 @@
   <section class="promise">
     <div class="wrap">
       <p class="reveal">
-        במשדר החי נחשוף את השיטה הפרקטית<br />
+        במשדר החי נחשוף את <span class="scribble">השיטה הפרקטית</span><br />
         איך לגייס את ה-AI בתור העובד האישי שלך, להשיג חופש תנועה בין עיצוב לקוד,
-        ולהבטיח את המעמד המקצועי שלך בשוק משתגע.
+        ו<span class="scribble">להבטיח את המעמד המקצועי</span> שלך בשוק משתגע.
       </p>
     </div>
   </section>
