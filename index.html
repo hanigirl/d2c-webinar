@@ -526,9 +526,9 @@
       margin-top: 110px;
       margin-bottom: 24px;
       text-align: center;
-      /* Sits outside the reading column: at headline size the sentence needs
-         the full section width to stay on one line. */
-      padding-inline: 24px;
+      /* At headline size the sentence outgrows the reading column and must not
+         wrap, so it reclaims the column's own padding on both sides. */
+      margin-inline: -40px;
     }
 
     .learn-closer p {
@@ -861,7 +861,7 @@
       .learn-card { padding: 28px 24px 32px; }
       .learn-card h3 { font-size: 26px; }
       .learn-card p, .host p { font-size: 20px; }
-      .learn-closer { margin-top: 64px; margin-bottom: 8px; }
+      .learn-closer { margin-top: 64px; margin-bottom: 8px; margin-inline: -20px; }
       .for-item { font-size: 21px; padding: 20px; }
       .host h3 { font-size: 27px; }
       .form-card { padding: 32px 24px; }
@@ -1091,181 +1091,11 @@
         </article>
       </div>
 
-      <span class="tile tile-1"><img src="assets/claude-logo.svg" alt="" /></span>
-      <span class="tile tile-2"><svg viewBox="0 0 16 16" fill="#fff" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></span>
-      <span class="tile tile-3"><svg viewBox="0 0 38 57" fill="#fff" aria-hidden="true"><path d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z"/><path d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 0 1-19 0z"/><path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z"/><path d="M0 9.5A9.5 9.5 0 0 1 9.5 0H19v19H9.5A9.5 9.5 0 0 1 0 9.5z"/><path d="M0 28.5A9.5 9.5 0 0 1 9.5 19H19v19H9.5A9.5 9.5 0 0 1 0 28.5z"/></svg></span>
-      <span class="tile tile-4"><img src="assets/cursor-logo.png" alt="" /></span>
-    </div>
-
-    <!-- 2 · qualifier — sits right above the headline -->
-    <p class="hero-qualifier reveal">
-      למעצבי דיגיטל שרואים איך ה-AI משנה את הכללים,<br />
-      ומבינים שרק לעצב בפיגמה זה כבר פשוט לא מספיק ב-2026…
-    </p>
-
-    <!-- 3 · the headline -->
-    <h1 class="hero-title reveal">
-      איך לפרוץ כמעצב של העולם החדש<br class="wide-only" />
-      להעלות קוד חי ראשון תוך 60 דקות,<br class="wide-only" />
-      ולהפוך לנכס הכי חזק בצוות
-    </h1>
-
-    <!-- 4 · the promise -->
-    <p class="hero-sub reveal">
-      משדר לייב מיוחד שיחשוף איך לגייס את יכולות ה-AI שהופכים <strong>Figma לקוד עובד</strong>
-      בלחיצת כפתור, מכפילים לך את הספק בעבודה, גומרים את הפינג-פונג מול המפתחים,
-      ומאפשרים לך לשחרר גרסאות פיקסל-פרפקט ללייב במהירות שיא,
-      ולהפוך <strong>למעצב/ת בלתי ניתן להחלפה</strong> בצוות
-    </p>
-
-    <!-- 5 · the objection-killer -->
-    <p class="hero-tagline reveal">
-      בלי להיות אדם טכני ובלי להתפשר על אף פיקסל.
-    </p>
-
-    <a class="cta reveal" href="#register">אני רוצה להירשם למשדר</a>
-    <span class="cta-note reveal">ההשתתפות ללא עלות · מספר המקומות מוגבל</span>
-
-    <div class="hero-meta reveal">
-      <span class="meta-pill">
-        <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <rect x="1.5" y="2.8" width="13" height="11.7" rx="2" stroke="currentColor" stroke-width="1.3"/>
-          <path d="M1.5 6.3h13M5 1.5v2.6M11 1.5v2.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-        </svg>
-        <!-- TODO: תאריך המשדר -->
-        <span>יום ג׳ | 00.00</span>
-      </span>
-      <span class="meta-pill">
-        <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <circle cx="8" cy="8" r="6.4" stroke="currentColor" stroke-width="1.3"/>
-          <path d="M8 4.4V8l2.4 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-        </svg>
-        <!-- TODO: שעה + אורך -->
-        <span>20:00 | 60 דקות</span>
-      </span>
-      <span class="meta-pill">
-        <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <rect x="1.4" y="3.6" width="9.6" height="8.8" rx="2" stroke="currentColor" stroke-width="1.3"/>
-          <path d="M11 7l3.6-2.2v6.4L11 9z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
-        </svg>
-        <span>שידור חי בזום</span>
-      </span>
-    </div>
-  </section>
-
-
-  <!-- ═══════════════════ HERO VISUAL ═══════════════════ -->
-  <section class="hero-visual">
-    <div class="visual-stage">
-
-      <div class="pixels" aria-hidden="true">
-        <i style="left:45.2%;top:56.0%;width:9px;height:5px;animation-duration:11.1s;animation-delay:-2.3s;opacity:0.35;border:1px solid #ff7ac4;"></i>
-        <i style="left:47.6%;top:61.4%;width:4px;height:3px;animation-duration:11.0s;animation-delay:-13.7s;opacity:0.55;background:#8f6bff;"></i>
-        <i style="left:63.4%;top:59.5%;width:5px;height:5px;animation-duration:12.9s;animation-delay:-6.2s;opacity:0.34;background:#ff2b9b;"></i>
-        <i style="left:83.2%;top:6.3%;width:3px;height:4px;animation-duration:14.9s;animation-delay:-6.4s;opacity:0.68;background:#7b5cff;"></i>
-        <i style="left:44.1%;top:84.2%;width:6px;height:4px;animation-duration:12.8s;animation-delay:-8.0s;opacity:0.61;background:#ffffff;"></i>
-        <i style="left:65.5%;top:40.7%;width:6px;height:9px;animation-duration:7.7s;animation-delay:-11.9s;opacity:0.67;border:1px solid #ff7ac4;"></i>
-        <i style="left:28.9%;top:7.0%;width:9px;height:3px;animation-duration:10.6s;animation-delay:-2.5s;opacity:0.46;background:#ff2b9b;"></i>
-        <i style="left:84.7%;top:0.1%;width:4px;height:3px;animation-duration:11.2s;animation-delay:-0.3s;opacity:0.47;background:#ff2b9b;"></i>
-        <i style="left:56.6%;top:19.8%;width:7px;height:4px;animation-duration:10.0s;animation-delay:-11.0s;opacity:0.26;background:#ffffff;"></i>
-        <i style="left:75.8%;top:11.8%;width:4px;height:7px;animation-duration:7.9s;animation-delay:-15.0s;opacity:0.69;background:#c04cff;"></i>
-        <i style="left:68.2%;top:18.8%;width:6px;height:4px;animation-duration:15.9s;animation-delay:-3.7s;opacity:0.48;border:1px solid #ffffff;"></i>
-        <i style="left:11.7%;top:42.1%;width:4px;height:3px;animation-duration:9.4s;animation-delay:-0.5s;opacity:0.69;background:#7b5cff;"></i>
-        <i style="left:99.8%;top:2.0%;width:4px;height:5px;animation-duration:16.0s;animation-delay:-6.4s;opacity:0.57;background:#ff2b9b;"></i>
-        <i style="left:98.9%;top:21.3%;width:4px;height:3px;animation-duration:14.0s;animation-delay:-10.7s;opacity:0.41;background:#ff2b9b;"></i>
-        <i style="left:7.4%;top:20.9%;width:7px;height:4px;animation-duration:7.1s;animation-delay:-10.1s;opacity:0.59;background:#c04cff;"></i>
-        <i style="left:95.9%;top:48.4%;width:6px;height:4px;animation-duration:14.8s;animation-delay:-13.1s;opacity:0.33;border:1px solid #c04cff;"></i>
-        <i style="left:81.8%;top:24.9%;width:4px;height:4px;animation-duration:13.7s;animation-delay:-1.0s;opacity:0.36;background:#ffffff;"></i>
-        <i style="left:88.2%;top:60.4%;width:5px;height:3px;animation-duration:7.9s;animation-delay:-15.4s;opacity:0.78;background:#c04cff;"></i>
-        <i style="left:74.0%;top:39.2%;width:5px;height:9px;animation-duration:15.1s;animation-delay:-8.1s;opacity:0.54;background:#8f6bff;"></i>
-        <i style="left:97.7%;top:12.6%;width:5px;height:6px;animation-duration:12.9s;animation-delay:-6.1s;opacity:0.29;background:#c04cff;"></i>
-        <i style="left:91.7%;top:20.4%;width:3px;height:3px;animation-duration:9.4s;animation-delay:-8.9s;opacity:0.28;border:1px solid #c04cff;"></i>
-        <i style="left:28.2%;top:53.1%;width:4px;height:3px;animation-duration:10.3s;animation-delay:-1.7s;opacity:0.79;background:#8f6bff;"></i>
-        <i style="left:73.3%;top:52.2%;width:4px;height:6px;animation-duration:7.3s;animation-delay:-15.7s;opacity:0.75;background:#8f6bff;"></i>
-        <i style="left:31.2%;top:3.4%;width:6px;height:7px;animation-duration:7.7s;animation-delay:-14.9s;opacity:0.42;background:#c04cff;"></i>
-        <i style="left:99.9%;top:7.5%;width:6px;height:4px;animation-duration:13.6s;animation-delay:-1.6s;opacity:0.66;background:#8f6bff;"></i>
-        <i style="left:13.0%;top:96.3%;width:4px;height:4px;animation-duration:7.8s;animation-delay:-8.4s;opacity:0.29;border:1px solid #ffffff;"></i>
-        <i style="left:94.4%;top:3.0%;width:5px;height:6px;animation-duration:7.1s;animation-delay:-5.4s;opacity:0.46;background:#ff2b9b;"></i>
-        <i style="left:60.9%;top:8.0%;width:7px;height:3px;animation-duration:15.9s;animation-delay:-1.9s;opacity:0.65;background:#ffffff;"></i>
-        <i style="left:93.4%;top:69.4%;width:5px;height:5px;animation-duration:11.2s;animation-delay:-7.3s;opacity:0.54;background:#ff7ac4;"></i>
-        <i style="left:3.0%;top:60.1%;width:5px;height:3px;animation-duration:9.1s;animation-delay:-4.8s;opacity:0.52;background:#ff7ac4;"></i>
-        <i style="left:66.0%;top:48.6%;width:3px;height:4px;animation-duration:9.7s;animation-delay:-5.1s;opacity:0.36;border:1px solid #c04cff;"></i>
-        <i style="left:75.4%;top:34.3%;width:5px;height:5px;animation-duration:15.0s;animation-delay:-10.8s;opacity:0.62;background:#c04cff;"></i>
-        <i style="left:63.4%;top:80.4%;width:9px;height:4px;animation-duration:14.9s;animation-delay:-9.8s;opacity:0.57;background:#7b5cff;"></i>
-        <i style="left:21.0%;top:13.5%;width:4px;height:9px;animation-duration:15.1s;animation-delay:-15.4s;opacity:0.29;background:#7b5cff;"></i>
-        <i style="left:82.2%;top:11.3%;width:5px;height:4px;animation-duration:15.3s;animation-delay:-2.7s;opacity:0.46;background:#ff7ac4;"></i>
-        <i style="left:49.4%;top:31.5%;width:9px;height:9px;animation-duration:15.8s;animation-delay:-8.8s;opacity:0.29;border:1px solid #ff2b9b;"></i>
-        <i style="left:27.8%;top:60.8%;width:7px;height:7px;animation-duration:9.5s;animation-delay:-10.3s;opacity:0.61;background:#ff7ac4;"></i>
-        <i style="left:1.9%;top:13.6%;width:5px;height:4px;animation-duration:7.2s;animation-delay:-2.7s;opacity:0.38;background:#c04cff;"></i>
-        <i style="left:79.7%;top:98.4%;width:3px;height:5px;animation-duration:8.0s;animation-delay:-7.4s;opacity:0.6;background:#7b5cff;"></i>
-        <i style="left:95.8%;top:68.4%;width:4px;height:9px;animation-duration:11.3s;animation-delay:-13.1s;opacity:0.26;background:#ffffff;"></i>
-        <i style="left:53.5%;top:3.6%;width:4px;height:4px;animation-duration:14.0s;animation-delay:-7.4s;opacity:0.77;border:1px solid #ff7ac4;"></i>
-        <i style="left:61.4%;top:75.6%;width:5px;height:9px;animation-duration:14.1s;animation-delay:-1.5s;opacity:0.3;background:#8f6bff;"></i>
-      </div>
-      <div class="visual-photo-wrap">
-        <img class="visual-photo" src="assets/hosts.png"
-             alt="חני בוסקילה ודניאל בוארון" />
-        <canvas class="visual-canvas" aria-hidden="true"></canvas>
-      </div>
-
-
-    </div>
-  </section>
-
-  <!-- ═══════════════════ PROMISE ═══════════════════ -->
-  <section class="promise">
-    <div class="wrap">
-      <p class="reveal">
-        במשדר החי נחשוף את השיטה הפרקטית: איך לגייס את ה-AI בתור
-        <span class="hl-yellow">"מפתח הג'וניור" האישי שלך</span>,
-        לסגור את <span class="hl-pink">הפינג-פונג מול הפרונט-אנד</span>,
-        ולהבטיח את המעמד המקצועי שלך בשוק משתגע.
-      </p>
-    </div>
-  </section>
-
-  <!-- ═══════════════════ WHAT YOU'LL LEARN ═══════════════════ -->
-  <section class="section-pad">
-    <div class="wrap">
-      <span class="eyebrow reveal">The agenda</span>
-      <h2 class="section-title reveal">מה תלמדו במפגש?</h2>
-      <p class="section-lead reveal">שלושה שלבים — מהבנת הבעיה ועד מפת הדרכים המלאה.</p>
-
-      <div class="learn-grid">
-        <article class="learn-card reveal">
-          <span class="learn-num">01</span>
-          <h3>מה החסמים שמונעים מכם לעבוד נכון בעידן החדש?</h3>
-          <p>
-            תבינו סוף סוף למה להיות מעצב פיגמה כבר לא מספיק ב-2026, מה החסמים שמונעים
-            מכם להתקדם מקצועית, ואיך כל זה קשור להזדמנות חדשה שלא הייתה קיימת קודם לכן.
-          </p>
-        </article>
-
-        <article class="learn-card reveal">
-          <span class="learn-num">02</span>
-          <h3>איך מעצבים באמת אמורים לעבוד עם AI?</h3>
-          <p>
-            תיחשפו לטכניקה פשוטה לחיסול הפומו, הדחיינות וחוסר הבהירות. תבינו בצורה ברורה
-            איך נכון לעבוד, ותשיגו הבנה עמוקה בשיטה שתהפוך אתכם פי 2 יעילים ומשפיעים יותר.
-          </p>
-        </article>
-
-        <article class="learn-card reveal">
-          <span class="learn-num">03</span>
-          <h3>יוז-קייס אמיתי מחברה שאימצה תהליך כזה</h3>
-          <p>
-            תגלו איך באמת נראה תהליך העבודה החדש של מעצבים, ותראו יוז-קייס אמיתי מחברות
-            שאנחנו מלווים בשנתיים האחרונות — ומה גרם להן לאמץ את המתודות החדשות בארגון.
-          </p>
-        </article>
-      </div>
-
       <div class="learn-closer">
         <p class="type-line" data-type>זו ההזדמנות שלך להוביל כמעצב בתוך מהפכת ה-AI</p>
         <a class="cta type-cta" href="#register">לשמור לי מקום במשדר</a>
       </div>
     </div>
-
   </section>
 
   <!-- ═══════════════════ WHO IS IT FOR ═══════════════════ -->
