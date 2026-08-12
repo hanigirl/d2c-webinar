@@ -654,6 +654,27 @@
     }
 
     /* ═══════════════════════════════════════════════
+       LIGHT SECTION — the one break in the dark page
+    ═══════════════════════════════════════════════ */
+    .section-light {
+      background: #ffffff;
+      color: #0d0d0d;
+    }
+
+    .section-light h2.section-title { color: #0d0d0d; }
+    .section-light .section-lead { color: rgba(13, 13, 13, 0.62); }
+    .section-light .eyebrow { color: var(--pink); }
+
+    .section-light .for-item {
+      background: #ececed;
+      color: #16161a;
+    }
+
+    /* The marker needs more weight against a light surface — pink at 20px on
+       white reads thin next to the black text it points at. */
+    .section-light .for-check { color: #16161a; }
+
+    /* ═══════════════════════════════════════════════
        HOSTS
     ═══════════════════════════════════════════════ */
     .hosts-grid {
@@ -1099,7 +1120,7 @@
   </section>
 
   <!-- ═══════════════════ WHO IS IT FOR ═══════════════════ -->
-  <section class="section-pad" style="background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);">
+  <section class="section-pad section-light">
     <div class="wrap">
       <span class="eyebrow reveal">Who is it for</span>
       <h2 class="section-title reveal">למי זה מתאים?</h2>
