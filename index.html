@@ -1512,18 +1512,31 @@
         return;
       }
 
+      var DRAW = 1600;   // must match the CSS transition
+      var GAP = 260;     // beat between one stroke finishing and the next
+      var started = false;
+
+      // Drawn strictly in order: one stroke finishes before the next begins.
+      // Keying each stroke off its own intersection let the second start while
+      // the first was still travelling, and made its delay depend on when it
+      // happened to scroll into view.
+      function drawAll() {
+        if (started) return;
+        started = true;
+        marks.forEach(function (m, i) {
+          setTimeout(function () { m.classList.add('is-drawn'); }, i * (DRAW + GAP));
+        });
+      }
+
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
           if (!e.isIntersecting) return;
-          io.unobserve(e.target);
-          // Stagger, so the second phrase is underlined after the first rather
-          // than both appearing at once.
-          var i = Array.prototype.indexOf.call(marks, e.target);
-          setTimeout(function () { e.target.classList.add('is-drawn'); }, i * 900);
+          io.disconnect();
+          drawAll();
         });
       }, { threshold: 0.6 });
 
-      marks.forEach(function (m) { io.observe(m); });
+      io.observe(marks[0]);
     })();
 
     // ── Scroll-scrubbed staircase ──
