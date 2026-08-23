@@ -445,9 +445,47 @@
     .hand-note.n4 { right: -2%; top: 40%; transform: rotate(14deg); }
     .hand-note.n5 { right: -7%; top: 70%; transform: rotate(13deg); }
 
-    /* Too little room beside the photo to read them once the stage narrows. */
+    /* The margins beside the photo vanish as the stage narrows, so the notes
+       move onto the dark edges of the frame itself and flatten their tilt. */
     @media (max-width: 900px) {
-      .hand-notes { display: none; }
+      .hand-note { font-size: clamp(11px, 2.3vw, 17px); }
+      .hand-note.n1 { left:  0%;  top: 18%; transform: rotate(-13deg); }
+      .hand-note.n2 { left: -1%;  top: 72%; transform: rotate(-9deg); }
+      .hand-note.n3 { right: 0%;  top:  6%; transform: rotate(9deg); }
+      .hand-note.n4 { right: -1%; top: 43%; transform: rotate(11deg); }
+      .hand-note.n5 { right: 0%;  top: 86%; transform: rotate(9deg); }
+    }
+
+    /* On a phone the frame is only ~130px tall, so anything pinned around it
+       lands on their faces. Below that width the notes drop out of the stage
+       and stack under the photo, keeping the tilt but staying readable. */
+    @media (max-width: 600px) {
+      /* The section normally pulls the next one up under the photo's fade;
+         with the notes stacked below, that overlap would cut through them. */
+      .hero-visual { margin-bottom: 0; padding-bottom: 12px; }
+
+      .visual-stage { flex-direction: column; align-items: center; }
+
+      .hand-notes {
+        position: static;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 13px;
+        margin-top: 22px;
+      }
+
+      .hand-note {
+        position: static;
+        font-size: clamp(15px, 4.3vw, 20px);
+        text-shadow: none;
+      }
+
+      .hand-note.n1 { transform: rotate(-3deg); }
+      .hand-note.n2 { transform: rotate(2.5deg); }
+      .hand-note.n3 { transform: rotate(-2deg); }
+      .hand-note.n4 { transform: rotate(3deg); }
+      .hand-note.n5 { transform: rotate(-2.5deg); }
     }
 
     }
