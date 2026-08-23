@@ -782,64 +782,149 @@
 
     /* ═══════════════════════════════════════════════
        HOSTS
+       Each host is a two-column band — portrait on one side, credentials on
+       the other — mirrored between the two so the page alternates.
     ═══════════════════════════════════════════════ */
-    .hosts-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-      margin-top: 56px;
+    .hosts {
+      display: flex;
+      flex-direction: column;
+      gap: 96px;
+      margin-top: 72px;
     }
 
     .host {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 36px 32px 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+      display: grid;
+      /* Photo column sizes itself; the credentials take what is left. */
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-areas:
+        "photo text"
+        "photo logos";
+      align-items: center;
+      column-gap: 56px;
+      row-gap: 40px;
+    }
+
+    .host.is-flipped {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "text  photo"
+        "logos photo";
     }
 
     .host-photo {
-      width: 96px; height: 96px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--pink);
+      grid-area: photo;
+      width: clamp(210px, 24vw, 320px);
+      height: auto;
+      display: block;
+      align-self: end;
     }
 
-    .host h3 {
-      font-size: 31px;
-      font-weight: 700;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
+    .host-body {
+      grid-area: text;
+      max-width: 52ch;
+      /* Sits against the photo on one side and the frame edge on the other. */
+      margin-inline-start: auto;
+    }
+
+    .host.is-flipped .host-body {
+      margin-inline-start: 0;
+      margin-inline-end: auto;
+    }
+
+    .host-name {
+      font-family: 'Minecraft', monospace;
+      font-size: clamp(26px, 3vw, 50px);
+      font-weight: 400;
+      line-height: 1;
+      direction: ltr;
+      text-align: right;
+      letter-spacing: 0.01em;
+      /* The pixel face is wide; a wrapped surname reads as two people. */
+      white-space: nowrap;
     }
 
     .host-role {
-      font-size: 21px;
+      font-size: 20px;
       color: var(--muted);
-      margin-top: 6px;
+      margin-top: 16px;
     }
 
-    .host p {
-      font-size: 23px;
+    .host-role b {
+      color: var(--pink);
+      font-weight: 500;
+    }
+
+    .host-points {
+      list-style: none;
+      margin-top: 26px;
+      font-size: 21px;
       color: var(--muted);
-      line-height: 1.42;
+      line-height: 1.55;
     }
 
     .host-logos {
+      grid-area: logos;
+      /* Latin wordmarks, so they keep their left-to-right reading order
+         instead of being reversed by the page's RTL flow. */
+      direction: ltr;
       display: flex;
+      align-items: center;
+      justify-content: space-between;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: auto;
-      padding-top: 8px;
+      gap: 28px 40px;
     }
 
-    .host-logos span {
-      font-size: 18px;
-      color: var(--faint);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      padding: 6px 14px 4px;
+    .host-logos img {
+      height: 30px;
+      width: auto;
+      opacity: 0.78;
+      object-fit: contain;
+    }
+
+    /* No asset for this one yet, so it is set rather than drawn. */
+    .host-logos .logo-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    /* Side by side stops working once the portrait eats the text column. */
+    @media (max-width: 900px) {
+      .hosts { gap: 72px; margin-top: 56px; }
+
+      .host,
+      .host.is-flipped {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "photo"
+          "text"
+          "logos";
+        row-gap: 28px;
+        justify-items: center;
+      }
+
+      .host-photo { width: min(62vw, 280px); align-self: center; }
+
+      .host-body,
+      .host.is-flipped .host-body {
+        margin-inline: 0;
+        max-width: 100%;
+      }
+
+      .host-logos {
+        justify-content: center;
+        gap: 22px 34px;
+      }
+
+      .host-logos img { height: 26px; }
+      .host-logos .logo-text { font-size: 19px; }
+    }
+
+    @media (max-width: 600px) {
+      .host-role { font-size: 18px; }
+      .host-points { font-size: 19px; margin-top: 20px; }
+      .host-logos img { height: 22px; }
+      .host-logos .logo-text { font-size: 17px; }
     }
 
     /* ═══════════════════════════════════════════════
@@ -963,7 +1048,7 @@
        RESPONSIVE
     ═══════════════════════════════════════════════ */
     @media (max-width: 900px) {
-      .learn-grid, .hosts-grid { grid-template-columns: 1fr; }
+      .learn-grid { grid-template-columns: 1fr; }
       .for-item { --step: 0 !important; max-width: 100%; }
       h1.hero-title { font-size: 52px; }
       .wide-only { display: none; }
@@ -1282,39 +1367,56 @@
       <span class="eyebrow reveal">Your hosts</span>
       <h2 class="section-title reveal">מי אנחנו ולמה שתסמכו עלינו?</h2>
 
-      <div class="hosts-grid">
+      <div class="hosts">
         <article class="host reveal">
-          <img class="host-photo" src="assets/daniel.png" alt="דניאל בוארון" loading="lazy" />
-          <div>
-            <h3>דניאל בוארון</h3>
-            <div class="host-role">מייסד כנס designAI · טופ קריאטור בלינקדאין</div>
+          <img class="host-photo" src="assets/host-daniel.png" alt="דניאל בוארון" loading="lazy" />
+
+          <div class="host-body">
+            <h3 class="host-name">Daniel Boaron</h3>
+            <p class="host-role">
+              <b>דניאל בוארון</b> · מייסד כנס DesignAI • טופ-קריאטור בלינקדאין
+            </p>
+            <ul class="host-points">
+              <li>מוביל את תחום העיצוב וה-AI בארץ.</li>
+              <li>מרצה ומוביל סדנאות לחברות מוצר לצוותים מגוונים.</li>
+              <li>בונה פתרונות AI מותאמים לארגונים וחברות.</li>
+              <li>ביניהם: Fiverr, Monday, MyHeritage, Palo Alto ועוד…</li>
+            </ul>
           </div>
-          <p>
-            מוביל את תחום העיצוב וה-AI בארץ. חרש את הארץ בסדנאות לחברות ובפתרונות AI
-            מותאמים לארגונים.
-          </p>
+
           <div class="host-logos">
-            <span>monday</span>
-            <span>fiverr</span>
-            <span>MyHeritage</span>
-            <span>ועוד</span>
+            <img src="assets/logos/rubik.png" alt="Rubrik" loading="lazy" />
+            <img src="assets/logos/cato.png" alt="Cato Networks" loading="lazy" />
+            <img src="assets/logos/cellebrite.png" alt="Cellebrite" loading="lazy" />
+            <img src="assets/logos/storai.png" alt="stor.ai" loading="lazy" />
+            <img src="assets/logos/remitly.png" alt="Remitly" loading="lazy" />
           </div>
         </article>
 
-        <article class="host reveal">
-          <img class="host-photo" src="assets/hani-new.png" alt="חני בוסקילה" loading="lazy" />
-          <div>
-            <h3>חני בוסקילה</h3>
-            <div class="host-role">מעצבת מוצר ומפתחת · 15 שנות ניסיון</div>
+        <article class="host is-flipped reveal">
+          <img class="host-photo" src="assets/host-hani.png" alt="חני בוסקילה" loading="lazy" />
+
+          <div class="host-body">
+            <h3 class="host-name">Hani Buskila</h3>
+            <p class="host-role">
+              <b>חני בוסקילה</b> · מייסדת קהילת המעצבים של העולם החדש •
+              מפתחת פרונט אנד ומעצבת UX UI
+            </p>
+            <ul class="host-points">
+              <li>מעצבת מוצר בכירה, בעלת ניסיון עשיר בפיתוח ובעיצוב מוצר בחברות בארץ ובחו"ל.</li>
+              <li>מנחה סדנאות AI לעסקים וחברות.</li>
+              <li>בעבר מרצה בטכניון ובמכללות לעיצוב.</li>
+              <li>בונה מוצרים אמיתיים ליזמים וחברות באמצעות AI.</li>
+            </ul>
           </div>
-          <p>
-            שנים של ניסיון כמרצה ומנטורית בחוגים לעיצוב ובטכניון. בעלת קהילת המעצבים החדש
-            ובילדרית AI, מלווה בעלי עסקים וחברות ביצירת סוכני AI מותאמים לעסק.
-          </p>
+
           <div class="host-logos">
-            <span>הטכניון</span>
-            <span>UXTRA</span>
-            <span>קהילת המעצבים החדש</span>
+            <img src="assets/logos/elementor.png" alt="Elementor" loading="lazy" />
+            <img src="assets/logos/contrast-wordmark.png" alt="Contrast" loading="lazy" />
+            <span class="logo-text">הטכניון</span>
+            <img src="assets/logos/esh.svg" alt="Esh" loading="lazy" />
+            <img src="assets/logos/dazn.svg" alt="DAZN" loading="lazy" />
+            <img src="assets/logos/torii.svg" alt="Torii" loading="lazy" />
           </div>
         </article>
       </div>
