@@ -30,6 +30,12 @@
       font-weight: 400; font-style: italic; font-display: swap;
     }
     @font-face {
+      font-family: 'Berkowitz Hand';
+      src: url('fonts/OHEyalMeirBerkowitz-Regular.woff2') format('woff2'),
+           url('fonts/OHEyalMeirBerkowitz-Regular.woff') format('woff');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
       font-family: 'Almoni Tzar';
       src: url('fonts/almoni-tzar-regular-aaa.otf') format('opentype');
       font-weight: 400; font-style: normal; font-display: swap;
@@ -409,6 +415,41 @@
     .visual-photo-wrap.is-pixelated .visual-canvas { display: block; }
     .visual-photo-wrap.is-pixelated .visual-photo { visibility: hidden; }
 
+    /* ── Handwritten questions scattered around the hosts ──
+       The rotation lives on the positioned wrapper and the fade-in on the
+       inner span, because .reveal resets transform when it lands. */
+    .hand-notes {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .hand-note {
+      position: absolute;
+      font-family: 'Berkowitz Hand', 'Almoni Tzar', sans-serif;
+      font-size: clamp(16px, 1.75vw, 30px);
+      line-height: 1.15;
+      color: #fff;
+      white-space: nowrap;
+      text-shadow: 0 2px 22px rgba(0, 0, 0, 0.9);
+    }
+
+    .hand-note > span {
+      display: inline-block;
+    }
+
+    .hand-note.n1 { left: -6%;  top: 34%; transform: rotate(-20deg); }
+    .hand-note.n2 { left:  3%;  top: 62%; transform: rotate(-12deg); }
+    .hand-note.n3 { right:  5%; top:  7%; transform: rotate(10deg); }
+    .hand-note.n4 { right: -2%; top: 40%; transform: rotate(14deg); }
+    .hand-note.n5 { right: -7%; top: 70%; transform: rotate(13deg); }
+
+    /* Too little room beside the photo to read them once the stage narrows. */
+    @media (max-width: 900px) {
+      .hand-notes { display: none; }
+    }
+
     }
 
     @media (max-width: 600px) {
@@ -467,10 +508,14 @@
     .promise p {
       font-size: 34px;
       line-height: 1.4;
-      max-width: 46ch;
+      /* Wide enough for the longest authored line to sit on one row, so the
+         brush stroke under a phrase is never split across a line break. */
+      max-width: 66ch;
       margin: 0 auto;
       text-align: center;
     }
+
+    .promise .scribble { white-space: nowrap; }
 
     /* ═══════════════════════════════════════════════
        LEARN CARDS
@@ -1078,6 +1123,14 @@
         <img class="visual-photo" src="assets/hosts.png"
              alt="חני בוסקילה ודניאל בוארון" />
         <canvas class="visual-canvas" aria-hidden="true"></canvas>
+      </div>
+
+      <div class="hand-notes">
+        <span class="hand-note n1"><span class="reveal">איך מוצאים זמן ללמוד את הכל?</span></span>
+        <span class="hand-note n2"><span class="reveal">מה התהליכים שקורים בחברות?</span></span>
+        <span class="hand-note n3"><span class="reveal">מאיפה להתחיל בכלל?</span></span>
+        <span class="hand-note n4"><span class="reveal">איזה כלי נכון ללמוד?</span></span>
+        <span class="hand-note n5"><span class="reveal">מצליחים להיכנס לקצב קוד?</span></span>
       </div>
 
 
