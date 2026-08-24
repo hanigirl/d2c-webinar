@@ -1284,16 +1284,14 @@
           <rect x="1.5" y="2.8" width="13" height="11.7" rx="2" stroke="currentColor" stroke-width="1.3"/>
           <path d="M1.5 6.3h13M5 1.5v2.6M11 1.5v2.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
         </svg>
-        <!-- TODO: תאריך המשדר -->
-        <span>יום ג׳ | 00.00</span>
+        <span>יום ד׳ | 2.9</span>
       </span>
       <span class="meta-pill">
         <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <circle cx="8" cy="8" r="6.4" stroke="currentColor" stroke-width="1.3"/>
           <path d="M8 4.4V8l2.4 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
         </svg>
-        <!-- TODO: שעה + אורך -->
-        <span>20:00 | 60 דקות</span>
+        <span>19:30 | 60 דקות</span>
       </span>
       <span class="meta-pill">
         <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -2136,51 +2134,38 @@
         el.addEventListener('blur', function () { localize(el); });
       });
 
-      // ── Brevo submission ──
-      // This page is static (GitHub Pages), so it must NEVER hold the
-      // xkeysib- API key: everything here is downloadable by every visitor,
-      // and that key can read the whole contact database and spend send
-      // credits. The Marketing Automation tracker key below is a different
-      // credential — write-only, meant to be published, and useless for
-      // reading data. Brevo's /p endpoint answers CORS preflight with
-      // `Access-Control-Allow-Origin: *`, so we post to it directly and skip
-      // loading Brevo's sa.js tracker: one less third-party script, and one
-      // less thing for an ad blocker to break silently.
-      var BREVO_ENDPOINT = 'https://in-automate.brevo.com/p';
-      var BREVO_MA_KEY   = 'qf7rdj4riqquwibatd3zgawd';
-      var CAMPAIGN       = '2026-09-webinar';
-
-      // Never send the SMS attribute — Brevo validates it server-side and a
-      // rejected number returns 400, which discards the whole registration.
-      // The phone goes into the plain-text PHONE attribute instead.
-
-      // Brevo requires a stable visitor id (sa.js keeps one in a cookie).
-      function visitorId() {
-        var STORE = 'd2c_cuid';
-        try {
-          var saved = localStorage.getItem(STORE);
-          if (saved) return saved;
-        } catch (err) { /* private mode — fall through to a throwaway id */ }
-
-        var id = (window.crypto && crypto.randomUUID)
-          ? crypto.randomUUID()
-          : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-              var r = Math.random() * 16 | 0;
-              return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-            });
-
-        try { localStorage.setItem(STORE, id); } catch (err) {}
-        return id;
-      }
+      // ── Submission → Make → Brevo ──
+      // This page is static, so it can never hold the Brevo API key: every
+      // byte here is downloadable by any visitor, and that key can read the
+      // whole contact database and spend send credits. So the form posts to
+      // a Make webhook instead. The Brevo key lives in Make, and Make puts
+      // the contact straight into the d2c-webinar-1 list (id 17).
+      //
+      // The webhook URL below is NOT a secret — it can only receive data,
+      // never read anything back — so it is safe to publish here.
+      var MAKE_WEBHOOK = 'https://hook.eu2.make.com/o45ahj4m227bta9ea7aezb3rtdsgc4jj';
+      var CAMPAIGN     = '2026-09-webinar';
 
       var status = document.getElementById('formStatus');
       var button = form.querySelector('button[type="submit"]');
       var buttonLabel = button.textContent;
 
+      function failed() {
+        // Never drop a lead silently — a dead connection or a stopped Make
+        // scenario lands here, so say so and leave the filled-in form intact.
+        button.disabled = false;
+        button.textContent = buttonLabel;
+        status.textContent = 'לא הצלחנו לשמור את ההרשמה. בדקו את החיבור לאינטרנט ונסו שוב, ' +
+                             'או שלחו לנו מייל ל-hani@uxtra.co.il ונרשום אתכם ידנית.';
+        status.hidden = false;
+      }
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         fields.forEach(localize);            // messages set before the bubble shows
         if (!form.reportValidity()) return;
+
+        if (!MAKE_WEBHOOK) { failed(); return; }
 
         status.hidden = true;
         button.disabled = true;
@@ -2189,34 +2174,27 @@
         var full = form.fullname.value.trim().replace(/\s+/g, ' ');
         var parts = full.split(' ');
 
-        fetch(BREVO_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-          body: JSON.stringify({
-            sib_type: 'identify',
-            key: BREVO_MA_KEY,
-            cuid: visitorId(),
-            email_id: form.email.value.trim(),
-            contact: {
-              FIRSTNAME:   parts[0],
-              LASTNAME:    parts.slice(1).join(' '),
-              FULL_NAME:   full,
-              PHONE:       form.phone.value.trim(),
-              D2C_WEBINAR: CAMPAIGN
-            }
-          })
-        }).then(function (res) {
-          if (!res.ok) throw new Error('Brevo responded ' + res.status);
-          window.location.href = form.dataset.redirect;
-        }).catch(function () {
-          // Never drop a lead silently — an ad blocker or a dead connection
-          // lands here, so say so and leave the filled-in form intact.
-          button.disabled = false;
-          button.textContent = buttonLabel;
-          status.textContent = 'לא הצלחנו לשמור את ההרשמה. בדקו את החיבור לאינטרנט ונסו שוב, ' +
-                               'או שלחו לנו מייל ל-hani@uxtra.co.il ונרשום אתכם ידנית.';
-          status.hidden = false;
+        // Form-encoded, not JSON, for two reasons: it is one of the three
+        // content types the browser treats as a CORS "simple request" (so no
+        // preflight for Make to answer), and Make splits it into separate
+        // named fields you can map in the scenario.
+        var body = new URLSearchParams({
+          fullname:  full,
+          firstname: parts[0],
+          lastname:  parts.slice(1).join(' '),
+          email:     form.email.value.trim(),
+          phone:     form.phone.value.trim(),
+          campaign:  CAMPAIGN
         });
+
+        fetch(MAKE_WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+          body: body.toString()
+        }).then(function (res) {
+          if (!res.ok) throw new Error('Make responded ' + res.status);
+          window.location.href = form.dataset.redirect;
+        }).catch(failed);
       });
     })();
 
