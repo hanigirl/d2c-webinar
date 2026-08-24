@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <title>נרשמת למשדר — Design to Code</title>
+</head>
+<!--
+  Built for email clients, not browsers: tables for layout, every style
+  inline, no web fonts and no background images. Outlook ignores <style>
+  blocks, floats and flexbox, so none of those appear here.
+  Greeting uses the contact attribute Brevo already holds; if it is empty the
+  sentence still reads correctly.
+-->
+<body style="margin:0;padding:0;background-color:#131010;">
+
+  <!-- Preheader: the grey line clients show next to the subject -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+    יום רביעי, 2.9 בשעה 19:30. שריינו ביומן והצטרפו לקבוצה השקטה.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+         style="background-color:#131010;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+               style="width:600px;max-width:100%;background-color:#1b1818;border-radius:16px;">
+
+          <!-- ── Headline ── -->
+          <tr>
+            <td align="center" style="padding:44px 32px 8px;">
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;
+                        letter-spacing:2px;color:#ff2b9b;text-transform:uppercase;">
+                DESIGN TO CODE
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:12px 32px 0;">
+              <h1 style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:32px;
+                         line-height:1.25;color:#ffffff;font-weight:bold;">
+                יש, נרשמת!
+              </h1>
+            </td>
+          </tr>
+
+          <!-- ── Body ── -->
+          <tr>
+            <td style="padding:20px 32px 0;">
+              <p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:17px;
+                        line-height:1.7;color:#ffffff;">
+                היי {{ contact.FIRSTNAME }},
+              </p>
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:17px;
+                        line-height:1.7;color:#ffffff;">
+                שמרנו לך מקום במשדר החי. נחשוף בו איך לגייס את ה-AI בתור העובד האישי שלך,
+                להשיג חופש תנועה בין עיצוב לקוד, ולהפוך לנכס הכי חזק בצוות.
+              </p>
+            </td>
+          </tr>
+
+          <!-- ── When ── -->
+          <tr>
+            <td style="padding:28px 32px 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                     style="background-color:#231f1f;border-radius:12px;">
+                <tr>
+                  <td align="center" style="padding:22px 24px;">
+                    <p style="margin:0 0 6px;font-family:Arial,Helvetica,sans-serif;font-size:19px;
+                              line-height:1.5;color:#ffffff;font-weight:bold;">
+                      יום רביעי, 2.9 בשעה 19:30
+                    </p>
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:15px;
+                              line-height:1.5;color:#bdb6b6;">
+                      בזום · כשעה · הקישור יישלח לפני השידור
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ── Two small things ── -->
+          <tr>
+            <td style="padding:30px 32px 0;">
+              <p style="margin:0 0 18px;font-family:Arial,Helvetica,sans-serif;font-size:17px;
+                        line-height:1.7;color:#ffffff;">
+                בינתיים שני דברים קטנים שחשוב לעשות:
+              </p>
+            </td>
+          </tr>
+
+          <!-- 1 · calendar -->
+          <tr>
+            <td style="padding:0 32px;">
+              <p style="margin:0 0 10px;font-family:Arial,Helvetica,sans-serif;font-size:16px;
+                        line-height:1.6;color:#ffffff;">
+                <span style="color:#ff2b9b;font-weight:bold;">1.</span>
+                שריינו את זה ביומן עכשיו, כדי שלא תפספסו.
+              </p>
+            </td>
+          </tr>
+
+          <!-- 2 · WhatsApp -->
+          <tr>
+            <td style="padding:0 32px 4px;">
+              <p style="margin:0 0 18px;font-family:Arial,Helvetica,sans-serif;font-size:16px;
+                        line-height:1.6;color:#ffffff;">
+                <span style="color:#ff2b9b;font-weight:bold;">2.</span>
+                הצטרפו לקבוצת הוואטסאפ השקטה — שם נשלח את הקישור והתזכורות.
+              </p>
+            </td>
+          </tr>
+
+          <!-- ── CTA ── -->
+          <tr>
+            <td align="center" style="padding:10px 32px 0;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" bgcolor="#25d366" style="border-radius:100px;">
+                    <a href="https://chat.whatsapp.com/EKhg88xNKyIE2K82UTLBW6?mode=gi_t"
+                       style="display:inline-block;padding:15px 34px;font-family:Arial,Helvetica,sans-serif;
+                              font-size:17px;font-weight:bold;color:#0b2612;text-decoration:none;
+                              border-radius:100px;">
+                      להצטרפות לקבוצת הוואטסאפ
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding:18px 32px 0;">
+              <a href="https://uxtra.co.il/lives/design-to-code/"
+                 style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#bdb6b6;">
+                כל הפרטים על המשדר
+              </a>
+            </td>
+          </tr>
+
+          <!-- ── Sign-off ── -->
+          <tr>
+            <td style="padding:34px 32px 44px;">
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:17px;
+                        line-height:1.7;color:#ffffff;">
+                ניפגש בקרוב,<br />
+                <strong>חני בוסקילה ודניאל בוארון</strong>
+              </p>
+            </td>
+          </tr>
+        </table>
+
+        <!-- ── Footer ── -->
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+               style="width:600px;max-width:100%;">
+          <tr>
+            <td align="center" style="padding:22px 24px 8px;">
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;
+                        line-height:1.7;color:#8c8585;">
+                קיבלת את המייל הזה כי נרשמת למשדר של Design to Code.<br />
+                UXTRA · designAI
+              </p>
+            </td>
+          </tr>
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

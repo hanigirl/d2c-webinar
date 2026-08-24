@@ -942,7 +942,9 @@
     .logo-track {
       display: flex;
       width: max-content;
-      animation: logo-marquee 34s linear infinite;
+      /* Negative delay starts the loop mid-cycle, so the strip is already
+         populated on first paint instead of scrolling in from one end. */
+      animation: logo-marquee 34s linear -17s infinite;
     }
 
     /* Two identical sets, so translating by half the track loops seamlessly. */
@@ -1589,24 +1591,24 @@
           <div class="host-logos">
             <div class="logo-track">
               <div class="logo-set">
-                <img src="assets/logos/rubik.png" alt="Rubrik" loading="lazy" />
-                <img src="assets/logos/cato.png" alt="Cato Networks" loading="lazy" />
-                <img src="assets/logos/cellebrite.png" alt="Cellebrite" loading="lazy" />
-                <img src="assets/logos/storai.png" alt="stor.ai" loading="lazy" />
-                <img src="assets/logos/remitly.png" alt="Remitly" loading="lazy" />
-                <img class="logo-tall" src="assets/logos/monday.svg" alt="monday.com" loading="lazy" />
-                <img src="assets/logos/fiverr.svg" alt="Fiverr" loading="lazy" />
-                <img src="assets/logos/myheritage.png" alt="MyHeritage" loading="lazy" />
+                <img src="assets/logos/rubik.png" alt="Rubrik" />
+                <img src="assets/logos/cato.png" alt="Cato Networks" />
+                <img src="assets/logos/cellebrite.png" alt="Cellebrite" />
+                <img src="assets/logos/storai.png" alt="stor.ai" />
+                <img src="assets/logos/remitly.png" alt="Remitly" />
+                <img class="logo-tall" src="assets/logos/monday.svg" alt="monday.com" />
+                <img src="assets/logos/fiverr.svg" alt="Fiverr" />
+                <img src="assets/logos/myheritage.png" alt="MyHeritage" />
               </div>
               <div class="logo-set" aria-hidden="true">
-                <img src="assets/logos/rubik.png" alt="Rubrik" loading="lazy" aria-hidden="true" />
-                <img src="assets/logos/cato.png" alt="Cato Networks" loading="lazy" aria-hidden="true" />
-                <img src="assets/logos/cellebrite.png" alt="Cellebrite" loading="lazy" aria-hidden="true" />
-                <img src="assets/logos/storai.png" alt="stor.ai" loading="lazy" aria-hidden="true" />
-                <img src="assets/logos/remitly.png" alt="Remitly" loading="lazy" aria-hidden="true" />
-                <img class="logo-tall" src="assets/logos/monday.svg" alt="monday.com" loading="lazy" aria-hidden="true" />
-                <img src="assets/logos/fiverr.svg" alt="Fiverr" loading="lazy" aria-hidden="true" />
-                <img src="assets/logos/myheritage.png" alt="MyHeritage" loading="lazy" aria-hidden="true" />
+                <img src="assets/logos/rubik.png" alt="Rubrik" aria-hidden="true" />
+                <img src="assets/logos/cato.png" alt="Cato Networks" aria-hidden="true" />
+                <img src="assets/logos/cellebrite.png" alt="Cellebrite" aria-hidden="true" />
+                <img src="assets/logos/storai.png" alt="stor.ai" aria-hidden="true" />
+                <img src="assets/logos/remitly.png" alt="Remitly" aria-hidden="true" />
+                <img class="logo-tall" src="assets/logos/monday.svg" alt="monday.com" aria-hidden="true" />
+                <img src="assets/logos/fiverr.svg" alt="Fiverr" aria-hidden="true" />
+                <img src="assets/logos/myheritage.png" alt="MyHeritage" aria-hidden="true" />
               </div>
             </div>
           </div>
@@ -1666,22 +1668,22 @@
           <div class="host-logos">
             <div class="logo-track">
               <div class="logo-set">
-                <img src="assets/logos/elementor.png" alt="Elementor" loading="lazy" />
-                <img src="assets/logos/contrast-wordmark.png" alt="Contrast" loading="lazy" />
-                <img class="logo-tall" src="assets/logos/technion.png" alt="הטכניון" loading="lazy" />
-                <img src="assets/logos/esh.svg" alt="Esh" loading="lazy" />
-                <img src="assets/logos/dazn.svg" alt="DAZN" loading="lazy" />
-                <img src="assets/logos/torii.svg" alt="Torii" loading="lazy" />
-                <img src="assets/logos/the-unit.svg" alt="The Unit" loading="lazy" />
+                <img src="assets/logos/elementor.png" alt="Elementor" />
+                <img src="assets/logos/contrast-wordmark.png" alt="Contrast" />
+                <img class="logo-tall" src="assets/logos/technion.png" alt="הטכניון" />
+                <img src="assets/logos/esh.svg" alt="Esh" />
+                <img src="assets/logos/dazn.svg" alt="DAZN" />
+                <img src="assets/logos/torii.svg" alt="Torii" />
+                <img src="assets/logos/the-unit.svg" alt="The Unit" />
               </div>
               <div class="logo-set" aria-hidden="true">
-                <img src="assets/logos/elementor.png" alt="Elementor" loading="lazy" aria-hidden="true" />
-                <img src="assets/logos/contrast-wordmark.png" alt="Contrast" loading="lazy" aria-hidden="true" />
-                <img class="logo-tall" src="assets/logos/technion.png" alt="הטכניון" loading="lazy" aria-hidden="true" />
-                <img src="assets/logos/esh.svg" alt="Esh" loading="lazy" aria-hidden="true" />
-                <img src="assets/logos/dazn.svg" alt="DAZN" loading="lazy" aria-hidden="true" />
-                <img src="assets/logos/torii.svg" alt="Torii" loading="lazy" aria-hidden="true" />
-                <img src="assets/logos/the-unit.svg" alt="The Unit" loading="lazy" aria-hidden="true" />
+                <img src="assets/logos/elementor.png" alt="Elementor" aria-hidden="true" />
+                <img src="assets/logos/contrast-wordmark.png" alt="Contrast" aria-hidden="true" />
+                <img class="logo-tall" src="assets/logos/technion.png" alt="הטכניון" aria-hidden="true" />
+                <img src="assets/logos/esh.svg" alt="Esh" aria-hidden="true" />
+                <img src="assets/logos/dazn.svg" alt="DAZN" aria-hidden="true" />
+                <img src="assets/logos/torii.svg" alt="Torii" aria-hidden="true" />
+                <img src="assets/logos/the-unit.svg" alt="The Unit" aria-hidden="true" />
               </div>
             </div>
           </div>
