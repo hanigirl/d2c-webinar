@@ -13,6 +13,16 @@ Adding it *before* the webhook response matters: the page waits for that
 response before sending the visitor to the thank-you page, so a failure to send
 surfaces instead of disappearing.
 
+## Already have the copy as a campaign?
+
+A campaign is a one-off send to a list; it cannot be triggered per registration.
+The content still gets reused — it just has to live as a **template**:
+
+- In Brevo open the campaign, **Duplicate → as template**, or copy its HTML into
+  a new template. Then follow step 1 from point 4 onward.
+- `registration-confirmation.html` in this folder is only a starting point. If
+  the campaign copy is the one going out, use that and ignore the file.
+
 ## 1 · Load the template into Brevo
 
 1. Brevo → **Campaigns → Templates → New template**.
