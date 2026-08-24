@@ -245,7 +245,7 @@
     /* 5 · objection-killer */
     .hero-tagline {
       font-size: 24px;
-      color: var(--muted);
+      color: var(--text);
       max-width: 58ch;
       line-height: 1.4;
       margin-bottom: 44px;
@@ -367,8 +367,12 @@
       .hero-deco {
         position: static;
         display: flex;
+        align-items: flex-start;
         justify-content: center;
-        gap: 12px;
+        gap: 10px;
+        /* The tilts and the drop each tile hangs at both reach above the row
+           box; this keeps the top corners clear of whatever sits above. */
+        padding-top: 14px;
         margin-bottom: 34px;
       }
 
@@ -382,14 +386,20 @@
       .hero-deco .tile img,
       .hero-deco .tile svg { width: 28px; height: 28px; }
 
-      /* The full-size bob was tuned for tiles scattered at the edges; in a
-         row that amplitude just reads as four misaligned boxes. */
+      /* Dealt out at angles and hung at different heights, so the row reads as
+         scattered cards rather than four boxes in a line. The bob is also cut
+         right down — at full amplitude it just looked like a broken row. */
       .hero-deco .tile { animation-name: tile-bob; }
+
+      .hero-deco .tile-1 { --tilt: -8deg; margin-top: 12px; }
+      .hero-deco .tile-2 { --tilt:  6deg; margin-top: 0; }
+      .hero-deco .tile-3 { --tilt: -5deg; margin-top: 16px; }
+      .hero-deco .tile-4 { --tilt: 10deg; margin-top: 4px; }
     }
 
     @keyframes tile-bob {
-      0%, 100% { transform: translateY(0)    rotate(-1.5deg); }
-      50%      { transform: translateY(-5px) rotate(1.5deg); }
+      0%, 100% { transform: translateY(0)    rotate(var(--tilt, 0deg)); }
+      50%      { transform: translateY(-5px) rotate(calc(var(--tilt, 0deg) + 2deg)); }
     }
 
     /* ── Drifting pixels ── */
@@ -580,7 +590,7 @@
     .cta-note {
       display: block;
       font-size: 20px;
-      color: var(--faint);
+      color: var(--text);
       margin-top: 16px;
     }
 
@@ -823,7 +833,7 @@
     }
 
     .section-light h2.section-title { color: #0d0d0d; }
-    .section-light .section-lead { color: rgba(13, 13, 13, 0.62); }
+    .section-light .section-lead { color: #0d0d0d; }
     .section-light .eyebrow { color: var(--pink); }
 
     .section-light .for-item {
@@ -1129,7 +1139,7 @@
 
     .form-legal {
       font-size: 18px;
-      color: var(--faint);
+      color: var(--text);
       text-align: center;
       margin-top: 18px;
       line-height: 1.4;
@@ -1210,9 +1220,9 @@
     @media (max-width: 600px) {
       .wrap { padding-inline: 20px; }
       .hero { padding: 80px 20px 72px; min-height: auto; }
-      h1.hero-title { font-size: 38px; margin-bottom: 28px; }
+      h1.hero-title { font-size: 46px; margin-bottom: 28px; }
       h2.section-title { font-size: 31px; }
-      .hero-qualifier { margin-bottom: 28px; }
+      .hero-qualifier { font-size: 22px; margin-bottom: 28px; }
       .hero-sub { font-size: 21px; }
       .hero-tagline { font-size: 20px; margin-bottom: 32px; }
       .section-lead { font-size: 23px; }
@@ -1248,7 +1258,7 @@
   <!-- ═══════════════════ LIVE STRIP ═══════════════════ -->
   <header class="live-strip">
     <span class="live-dot" aria-hidden="true"></span>
-    <span>הזמנה למשדר לייב</span>
+    <span>הזמנה למשדר לייב חינמי</span>
   </header>
 
   <!-- ═══════════════════ HERO ═══════════════════ -->
@@ -1482,7 +1492,7 @@
     <div class="wrap">
       <span class="eyebrow reveal">Who is it for</span>
       <h2 class="section-title reveal">למי זה מתאים?</h2>
-      <p class="section-lead reveal">אם אחד מהמשפטים האלה מרגיש מוכר — המשדר הזה בשבילך.</p>
+      <p class="section-lead reveal">אם אחד מהמשפטים האלה מרגיש מוכר, המשדר הזה בשבילך.</p>
 
       <div class="for-list">
         <div class="for-item">
