@@ -932,13 +932,41 @@
        height to carry the same visual weight as their neighbours. */
     .host-logos .logo-tall { height: 40px; }
 
-    /* The band is the positioning context for the field. The pixels sit over
-       the portrait so the trail reads as coming off the person, but stay under
-       the credentials so they never fight the text. */
+    /* The band is the positioning context for the field. The pixels sit behind
+       the portrait — the cut-out is transparent around the silhouette, so they
+       still read as coming off the person — and behind the credentials too. */
     .host { position: relative; }
-    .host > *:not(.pixels) { position: relative; }
-    .host-photo { z-index: 0; }
-    .host .pixels { z-index: 1; }
+
+    /* Named explicitly rather than with a wildcard, which would also catch the
+       absolutely-positioned decoration layers and drop them into the flow. */
+    .host-photo,
+    .host-body,
+    .host-logos { position: relative; }
+
+    /* A faint grid fills the empty corner opposite the portrait, masked so it
+       dissolves on every edge instead of ending on a hard line. */
+    .host-grid {
+      position: absolute;
+      top: -6%;
+      bottom: -6%;
+      width: 42%;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+      background-size: 46px 46px;
+      -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, #000 10%, rgba(0,0,0,0.45) 58%, transparent 100%);
+      mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, #000 10%, rgba(0,0,0,0.45) 58%, transparent 100%);
+    }
+
+    /* Opposite the photo: it sits right, so the grid goes left, and vice versa. */
+    .host .host-grid { left: 0; }
+    .host.is-flipped .host-grid { left: auto; right: 0; }
+
+    .host .pixels,
+    .host-grid { z-index: 0; }
+    .host-photo { z-index: 1; }
     .host-body,
     .host-logos { z-index: 2; }
     .host .pixels-left  i { animation-name: pixel-drift-left; }
@@ -961,7 +989,8 @@
 
       .host-photo { width: min(62vw, 280px); align-self: center; }
 
-      .host .pixels { display: none; }
+      .host .pixels,
+      .host-grid { display: none; }
 
       .host-body,
       .host.is-flipped .host-body {
@@ -1426,6 +1455,7 @@
         <article class="host reveal">
           <img class="host-photo" src="assets/host-daniel.png" alt="דניאל בוארון" loading="lazy" />
 
+          <div class="host-grid" aria-hidden="true"></div>
           <div class="pixels pixels-left" aria-hidden="true">
             <i style="left:79.6%;top:78.2%;width:4px;height:6px;animation-duration:10.6s;animation-delay:-15.0s;opacity:0.61;background:#8f6bff;"></i>
             <i style="left:25.9%;top:73.5%;width:5px;height:8px;animation-duration:14.8s;animation-delay:-10.1s;opacity:0.46;border:1px solid #8f6bff;"></i>
@@ -1499,6 +1529,7 @@
         <article class="host is-flipped reveal">
           <img class="host-photo" src="assets/host-hani.png" alt="חני בוסקילה" loading="lazy" />
 
+          <div class="host-grid" aria-hidden="true"></div>
           <div class="pixels pixels-right" aria-hidden="true">
             <i style="left:72.6%;top:16.6%;width:7px;height:9px;animation-duration:14.6s;animation-delay:-7.6s;opacity:0.39;background:#8f6bff;"></i>
             <i style="left:27.0%;top:42.9%;width:5px;height:9px;animation-duration:13.7s;animation-delay:-6.0s;opacity:0.64;border:1px solid #c04cff;"></i>
@@ -2034,7 +2065,49 @@
       var form = document.getElementById('registerForm');
       if (!form) return;
 
+      // The browser writes its validation bubbles in its own UI language, so an
+      // English Chrome shows "Please fill out this field" on a Hebrew page.
+      // setCustomValidity() overrides the text; we pick the message per field
+      // and per failure reason, and clear it again while the user types so a
+      // stale message never blocks a field that is now valid.
+      var MESSAGES = {
+        fullname: { valueMissing: 'נא למלא שם מלא' },
+        email: {
+          valueMissing: 'נא למלא כתובת אימייל',
+          typeMismatch: 'נא להזין כתובת אימייל תקינה, לדוגמה you@example.com'
+        },
+        phone: {
+          valueMissing: 'נא למלא מספר טלפון',
+          patternMismatch: 'נא להזין מספר טלפון תקין, לדוגמה 050-0000000'
+        }
+      };
+      var DEFAULT_MESSAGE = 'נא למלא שדה זה';
+
+      var fields = Array.prototype.slice.call(
+        form.querySelectorAll('input, select, textarea')
+      );
+
+      function localize(el) {
+        el.setCustomValidity('');            // reset so .validity reflects reality
+        if (el.validity.valid) return;
+
+        var messages = MESSAGES[el.id] || {};
+        var reason = ['valueMissing', 'typeMismatch', 'patternMismatch',
+                      'tooShort', 'tooLong', 'rangeUnderflow', 'rangeOverflow',
+                      'stepMismatch', 'badInput'].filter(function (key) {
+          return el.validity[key];
+        })[0];
+
+        el.setCustomValidity(messages[reason] || messages.valueMissing || DEFAULT_MESSAGE);
+      }
+
+      fields.forEach(function (el) {
+        el.addEventListener('input', function () { localize(el); });
+        el.addEventListener('blur', function () { localize(el); });
+      });
+
       form.addEventListener('submit', function (e) {
+        fields.forEach(localize);            // messages set before the bubble shows
         if (!form.reportValidity()) { e.preventDefault(); return; }
         if (form.getAttribute('action')) return;   // real endpoint — let it post
 
