@@ -137,67 +137,6 @@
     }
 
     /* ═══════════════════════════════════════════════
-       VIDEO
-    ═══════════════════════════════════════════════ */
-    .ty-video-block { padding: 20px 32px 90px; }
-
-    .video-frame {
-      position: relative;
-      aspect-ratio: 16 / 9;
-      width: 100%;
-      max-width: 780px;
-      margin: 0 auto;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: 0 30px 90px rgba(255, 43, 155, 0.14);
-    }
-
-    .video-frame iframe,
-    .video-frame video {
-      position: absolute;
-      inset: 0;
-      width: 100%; height: 100%;
-      border: 0;
-      display: block;
-    }
-
-    /* Placeholder shown until a real embed is dropped in */
-    .video-placeholder {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 18px;
-      background:
-        radial-gradient(60% 60% at 50% 45%, rgba(255, 43, 155, 0.12), transparent 70%),
-        var(--card);
-    }
-
-    .play-btn {
-      width: 76px; height: 76px;
-      border-radius: 50%;
-      background: var(--pink);
-      display: grid;
-      place-items: center;
-      box-shadow: 0 12px 40px rgba(255, 43, 155, 0.4);
-    }
-
-    .video-placeholder span {
-      font-size: 21px;
-      color: var(--faint);
-    }
-
-    .video-caption {
-      font-size: 21px;
-      color: var(--faint);
-      margin-top: 18px;
-    }
-
-    /* ═══════════════════════════════════════════════
        NEXT STEP — save the date
     ═══════════════════════════════════════════════ */
     .ty-step {
@@ -562,7 +501,6 @@
       .ty-hero { padding: 80px 20px 56px; }
       h1.ty-title { font-size: 36px; }
       .ty-sub { font-size: 22px; }
-      .ty-video-block { padding: 12px 20px 64px; }
       .ty-step { padding-block: 68px; }
       .ty-step h2 { font-size: 25px; }
       .date-card { padding: 28px 22px; }
@@ -596,39 +534,13 @@
     </p>
   </header>
 
-  <!-- ═══════════════════ VIDEO ═══════════════════ -->
-  <section class="ty-video-block">
-    <div class="wrap">
-      <!--
-        TODO · להחליף את ה-placeholder בסרטון של חני ודניאל (עד 2 דקות).
-        YouTube:  <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="..."
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
-                          allowfullscreen></iframe>
-        Vimeo:    <iframe src="https://player.vimeo.com/video/VIDEO_ID" title="..." allowfullscreen></iframe>
-        קובץ MP4: <video src="assets/welcome.mp4" controls playsinline poster="assets/welcome-poster.jpg"></video>
-      -->
-      <div class="video-frame reveal">
-        <div class="video-placeholder">
-          <div class="play-btn">
-            <svg width="26" height="28" viewBox="0 0 22 24" fill="none" aria-hidden="true">
-              <path d="M20 12L2 22.4V1.6L20 12z" fill="#fff" />
-            </svg>
-          </div>
-          <span>[ וידאו של חני ושל דניאל — עד 2 דקות ]</span>
-        </div>
-      </div>
-
-      <p class="video-caption reveal">קחו 2 דקות — זה מסביר בדיוק למה נרשמתם.</p>
-    </div>
-  </section>
-
   <!-- ═══════════════════ NEXT STEP ═══════════════════ -->
   <section class="ty-step">
     <div class="wrap">
       <span class="step-kicker reveal">Two small things</span>
 
       <h2 class="reveal">
-        אנחנו שומרים לך מקום מיוחד בלייב.<br />
+        אנחנו שומרים לך מקום מיוחד בלייב שיטיס לך את הקריירה.<br />
         <span class="underline">בינתיים</span> הנה שני דברים קטנים שחשוב לעשות:
       </h2>
 
