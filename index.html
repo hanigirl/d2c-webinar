@@ -360,8 +360,36 @@
       .tile img, .tile svg { width: 28px; height: 28px; }
     }
 
+    /* No room to float them at the sides, so on a phone the tiles become a
+       row at the very top of the hero, above the copy. Making the wrapper
+       static hands the pixel layer up to .hero, which is positioned. */
     @media (max-width: 600px) {
-      .hero-deco .tile { display: none; }
+      .hero-deco {
+        position: static;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 34px;
+      }
+
+      .hero-deco .tile {
+        position: static;
+        width: 56px;
+        height: 56px;
+        border-radius: 15px;
+      }
+
+      .hero-deco .tile img,
+      .hero-deco .tile svg { width: 28px; height: 28px; }
+
+      /* The full-size bob was tuned for tiles scattered at the edges; in a
+         row that amplitude just reads as four misaligned boxes. */
+      .hero-deco .tile { animation-name: tile-bob; }
+    }
+
+    @keyframes tile-bob {
+      0%, 100% { transform: translateY(0)    rotate(-1.5deg); }
+      50%      { transform: translateY(-5px) rotate(1.5deg); }
     }
 
     /* ── Drifting pixels ── */
@@ -714,6 +742,9 @@
       flex-direction: column;
       gap: 14px;
       margin-top: 48px;
+      /* Rows start parked off to the right; contain that so it cannot widen
+         the document before the scroll handler brings them in. */
+      overflow-x: clip;
     }
 
     .for-item {
@@ -1014,6 +1045,10 @@
         max-width: 100%;
       }
 
+      /* Without this the centred grid sizes the strip to the track's
+         max-content width and the page gains a horizontal scrollbar. */
+      .host-logos { justify-self: stretch; width: 100%; }
+
       .logo-set { gap: 40px; padding-inline-end: 40px; }
       .host-logos img { height: 24px; }
       .host-logos .logo-tall { height: 36px; }
@@ -1186,7 +1221,19 @@
       .learn-card { padding: 28px 24px 32px; }
       .learn-card h3 { font-size: 31px; }
       .learn-card p, .host p { font-size: 20px; }
-      .learn-closer { margin-top: 64px; margin-bottom: 8px; margin-inline: -20px; }
+      .learn-closer { margin-top: 64px; margin-bottom: 8px; margin-inline: 0; }
+
+      /* One line only fits at ~18px here, which throws away the moment. Let
+         it wrap and set it at headline scale instead — the characters are
+         laid out up front and only faded in, so wrapping costs no reflow. */
+      .learn-closer p {
+        font-size: clamp(34px, 9.4vw, 46px);
+        white-space: normal;
+        text-wrap: balance;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        margin-bottom: 40px;
+      }
       .for-item { font-size: 21px; padding: 20px; }
       .host h3 { font-size: 27px; }
       .form-card { padding: 32px 24px; }
