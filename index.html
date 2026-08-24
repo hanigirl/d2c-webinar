@@ -822,13 +822,14 @@
     .host-body {
       grid-area: text;
       max-width: 52ch;
-      /* Sits against the photo on one side and the frame edge on the other. */
-      margin-inline-start: auto;
+      /* The free space belongs on the frame side, so the block stays tucked
+         against the portrait rather than drifting away from it. */
+      margin-inline-end: auto;
     }
 
     .host.is-flipped .host-body {
-      margin-inline-start: 0;
-      margin-inline-end: auto;
+      margin-inline-end: 0;
+      margin-inline-start: auto;
     }
 
     .host-name {
@@ -871,11 +872,12 @@
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 28px 40px;
+      /* Sized so the longer of the two strips still holds one row. */
+      gap: 22px 30px;
     }
 
     .host-logos img {
-      height: 30px;
+      height: 26px;
       width: auto;
       opacity: 0.78;
       object-fit: contain;
@@ -883,7 +885,7 @@
 
     /* A stacked lockup rather than a single-line wordmark, so it needs more
        height to carry the same visual weight as its neighbours. */
-    .host-logos .logo-tall { height: 46px; }
+    .host-logos .logo-tall { height: 40px; }
 
     /* Side by side stops working once the portrait eats the text column. */
     @media (max-width: 900px) {
@@ -1414,6 +1416,7 @@
             <img src="assets/logos/esh.svg" alt="Esh" loading="lazy" />
             <img src="assets/logos/dazn.svg" alt="DAZN" loading="lazy" />
             <img src="assets/logos/torii.svg" alt="Torii" loading="lazy" />
+            <img src="assets/logos/the-unit.svg" alt="The Unit" loading="lazy" />
           </div>
         </article>
       </div>
