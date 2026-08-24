@@ -381,6 +381,24 @@
       100% { transform: translate(0, 0) scale(1); }
     }
 
+    /* Same drift laid on its side: the hosts' pixels travel away from them
+       instead of upwards. */
+    @keyframes pixel-drift-left {
+      0%   { transform: translate(0, 0) scale(1); }
+      25%  { transform: translate(-18px, 6px) scale(1.25); }
+      50%  { transform: translate(-34px, -4px) scale(0.85); }
+      75%  { transform: translate(-16px, -9px) scale(1.1); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    @keyframes pixel-drift-right {
+      0%   { transform: translate(0, 0) scale(1); }
+      25%  { transform: translate(18px, 6px) scale(1.25); }
+      50%  { transform: translate(34px, -4px) scale(0.85); }
+      75%  { transform: translate(16px, -9px) scale(1.1); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .pixels i { animation: none; }
     }
@@ -873,19 +891,28 @@
       justify-content: space-between;
       flex-wrap: wrap;
       /* Sized so the longer of the two strips still holds one row. */
-      gap: 22px 30px;
+      gap: 20px 24px;
     }
 
     .host-logos img {
-      height: 26px;
+      height: 22px;
       width: auto;
       opacity: 0.78;
       object-fit: contain;
     }
 
-    /* A stacked lockup rather than a single-line wordmark, so it needs more
-       height to carry the same visual weight as its neighbours. */
-    .host-logos .logo-tall { height: 40px; }
+    /* Stacked lockups rather than single-line wordmarks, so they need more
+       height to carry the same visual weight as their neighbours. */
+    .host-logos .logo-tall { height: 34px; }
+
+    /* The band is the positioning context for the field, and the credentials
+       have to out-stack it. */
+    .host { position: relative; }
+    .host > *:not(.pixels) { position: relative; z-index: 1; }
+
+    .host .pixels { z-index: 0; }
+    .host .pixels-left  i { animation-name: pixel-drift-left; }
+    .host .pixels-right i { animation-name: pixel-drift-right; }
 
     /* Side by side stops working once the portrait eats the text column. */
     @media (max-width: 900px) {
@@ -903,6 +930,8 @@
       }
 
       .host-photo { width: min(62vw, 280px); align-self: center; }
+
+      .host .pixels { display: none; }
 
       .host-body,
       .host.is-flipped .host-body {
@@ -1370,6 +1399,31 @@
         <article class="host reveal">
           <img class="host-photo" src="assets/host-daniel.png" alt="דניאל בוארון" loading="lazy" />
 
+          <div class="pixels pixels-left" aria-hidden="true">
+            <i style="left:52.7%;top:62.7%;width:6px;height:3px;animation-duration:11.1s;animation-delay:-13.3s;opacity:0.28;border:1px solid #ffffff;"></i>
+            <i style="left:52.6%;top:9.4%;width:5px;height:6px;animation-duration:14.5s;animation-delay:-7.5s;opacity:0.56;border:1px solid #7b5cff;"></i>
+            <i style="left:48.7%;top:38.1%;width:3px;height:9px;animation-duration:11.2s;animation-delay:-3.6s;opacity:0.64;background:#c04cff;"></i>
+            <i style="left:28.5%;top:79.4%;width:9px;height:6px;animation-duration:10.6s;animation-delay:-10.0s;opacity:0.4;background:#8f6bff;"></i>
+            <i style="left:22.1%;top:18.9%;width:8px;height:4px;animation-duration:12.5s;animation-delay:-14.8s;opacity:0.35;border:1px solid #ff2b9b;"></i>
+            <i style="left:14.4%;top:74.9%;width:8px;height:6px;animation-duration:10.3s;animation-delay:-10.1s;opacity:0.6;border:1px solid #ff2b9b;"></i>
+            <i style="left:15.0%;top:89.4%;width:4px;height:5px;animation-duration:8.9s;animation-delay:-13.4s;opacity:0.77;border:1px solid #7b5cff;"></i>
+            <i style="left:49.2%;top:74.0%;width:4px;height:9px;animation-duration:15.5s;animation-delay:-0.6s;opacity:0.59;background:#c04cff;"></i>
+            <i style="left:38.4%;top:38.1%;width:4px;height:8px;animation-duration:13.2s;animation-delay:-3.6s;opacity:0.37;border:1px solid #8f6bff;"></i>
+            <i style="left:48.4%;top:4.6%;width:3px;height:6px;animation-duration:13.4s;animation-delay:-0.4s;opacity:0.71;border:1px solid #ff7ac4;"></i>
+            <i style="left:49.7%;top:37.7%;width:3px;height:9px;animation-duration:14.9s;animation-delay:-14.3s;opacity:0.56;border:1px solid #8f6bff;"></i>
+            <i style="left:27.7%;top:71.0%;width:4px;height:8px;animation-duration:7.4s;animation-delay:-6.0s;opacity:0.6;background:#ff2b9b;"></i>
+            <i style="left:5.9%;top:82.0%;width:3px;height:4px;animation-duration:11.3s;animation-delay:-2.8s;opacity:0.52;background:#ff7ac4;"></i>
+            <i style="left:68.1%;top:66.1%;width:8px;height:9px;animation-duration:8.0s;animation-delay:-9.1s;opacity:0.61;background:#8f6bff;"></i>
+            <i style="left:59.4%;top:40.5%;width:8px;height:9px;animation-duration:7.3s;animation-delay:-2.5s;opacity:0.5;border:1px solid #ff7ac4;"></i>
+            <i style="left:20.7%;top:4.9%;width:5px;height:9px;animation-duration:13.3s;animation-delay:-7.4s;opacity:0.44;border:1px solid #ffffff;"></i>
+            <i style="left:50.9%;top:57.2%;width:8px;height:8px;animation-duration:9.4s;animation-delay:-15.1s;opacity:0.54;background:#ff2b9b;"></i>
+            <i style="left:68.9%;top:4.6%;width:9px;height:8px;animation-duration:10.4s;animation-delay:-12.5s;opacity:0.28;background:#8f6bff;"></i>
+            <i style="left:53.1%;top:48.1%;width:9px;height:8px;animation-duration:14.2s;animation-delay:-6.0s;opacity:0.3;background:#7b5cff;"></i>
+            <i style="left:30.3%;top:50.3%;width:6px;height:8px;animation-duration:10.9s;animation-delay:-9.6s;opacity:0.52;border:1px solid #ffffff;"></i>
+            <i style="left:31.4%;top:28.6%;width:4px;height:7px;animation-duration:9.8s;animation-delay:-9.2s;opacity:0.59;border:1px solid #ffffff;"></i>
+            <i style="left:9.8%;top:11.2%;width:5px;height:8px;animation-duration:7.7s;animation-delay:-7.3s;opacity:0.47;background:#8f6bff;"></i>
+          </div>
+
           <div class="host-body">
             <h3 class="host-name">Daniel Boaron</h3>
             <p class="host-role">
@@ -1389,11 +1443,39 @@
             <img src="assets/logos/cellebrite.png" alt="Cellebrite" loading="lazy" />
             <img src="assets/logos/storai.png" alt="stor.ai" loading="lazy" />
             <img src="assets/logos/remitly.png" alt="Remitly" loading="lazy" />
+            <img class="logo-tall" src="assets/logos/monday.svg" alt="monday.com" loading="lazy" />
+            <img src="assets/logos/fiverr.svg" alt="Fiverr" loading="lazy" />
+            <img src="assets/logos/myheritage.png" alt="MyHeritage" loading="lazy" />
           </div>
         </article>
 
         <article class="host is-flipped reveal">
           <img class="host-photo" src="assets/host-hani.png" alt="חני בוסקילה" loading="lazy" />
+
+          <div class="pixels pixels-right" aria-hidden="true">
+            <i style="left:32.6%;top:74.5%;width:8px;height:9px;animation-duration:9.9s;animation-delay:-10.9s;opacity:0.39;background:#ff7ac4;"></i>
+            <i style="left:56.3%;top:37.6%;width:7px;height:8px;animation-duration:12.3s;animation-delay:-11.4s;opacity:0.38;background:#ff7ac4;"></i>
+            <i style="left:69.9%;top:44.1%;width:5px;height:4px;animation-duration:11.3s;animation-delay:-3.7s;opacity:0.37;border:1px solid #ffffff;"></i>
+            <i style="left:34.5%;top:71.9%;width:7px;height:8px;animation-duration:12.0s;animation-delay:-6.8s;opacity:0.74;background:#ff7ac4;"></i>
+            <i style="left:36.9%;top:8.2%;width:5px;height:7px;animation-duration:9.5s;animation-delay:-3.1s;opacity:0.5;background:#ff2b9b;"></i>
+            <i style="left:39.2%;top:6.9%;width:4px;height:4px;animation-duration:14.5s;animation-delay:-4.1s;opacity:0.71;background:#c04cff;"></i>
+            <i style="left:30.1%;top:17.5%;width:7px;height:9px;animation-duration:15.9s;animation-delay:-8.3s;opacity:0.6;background:#c04cff;"></i>
+            <i style="left:38.9%;top:39.6%;width:7px;height:5px;animation-duration:7.4s;animation-delay:-4.2s;opacity:0.27;background:#7b5cff;"></i>
+            <i style="left:50.8%;top:26.9%;width:6px;height:4px;animation-duration:7.8s;animation-delay:-3.3s;opacity:0.68;background:#c04cff;"></i>
+            <i style="left:82.6%;top:82.0%;width:7px;height:8px;animation-duration:15.8s;animation-delay:-12.1s;opacity:0.29;border:1px solid #8f6bff;"></i>
+            <i style="left:60.5%;top:23.3%;width:4px;height:3px;animation-duration:13.8s;animation-delay:-10.3s;opacity:0.36;background:#ff7ac4;"></i>
+            <i style="left:30.8%;top:32.3%;width:7px;height:3px;animation-duration:12.8s;animation-delay:-4.6s;opacity:0.32;background:#c04cff;"></i>
+            <i style="left:38.6%;top:47.1%;width:8px;height:3px;animation-duration:11.4s;animation-delay:-1.7s;opacity:0.71;background:#8f6bff;"></i>
+            <i style="left:60.4%;top:80.3%;width:7px;height:7px;animation-duration:7.4s;animation-delay:-5.4s;opacity:0.57;background:#7b5cff;"></i>
+            <i style="left:61.7%;top:10.9%;width:3px;height:5px;animation-duration:10.0s;animation-delay:-4.2s;opacity:0.66;background:#8f6bff;"></i>
+            <i style="left:32.7%;top:80.5%;width:3px;height:4px;animation-duration:9.8s;animation-delay:-11.1s;opacity:0.59;background:#7b5cff;"></i>
+            <i style="left:35.8%;top:18.8%;width:7px;height:4px;animation-duration:8.1s;animation-delay:-6.1s;opacity:0.64;background:#8f6bff;"></i>
+            <i style="left:31.3%;top:30.8%;width:5px;height:3px;animation-duration:8.6s;animation-delay:-6.9s;opacity:0.74;background:#7b5cff;"></i>
+            <i style="left:37.2%;top:18.8%;width:6px;height:6px;animation-duration:15.0s;animation-delay:-14.3s;opacity:0.73;background:#ff7ac4;"></i>
+            <i style="left:32.2%;top:37.3%;width:7px;height:4px;animation-duration:14.5s;animation-delay:-12.4s;opacity:0.36;background:#8f6bff;"></i>
+            <i style="left:72.6%;top:66.1%;width:9px;height:4px;animation-duration:13.2s;animation-delay:-13.2s;opacity:0.6;background:#8f6bff;"></i>
+            <i style="left:39.2%;top:4.2%;width:7px;height:3px;animation-duration:15.1s;animation-delay:-15.4s;opacity:0.29;background:#ff7ac4;"></i>
+          </div>
 
           <div class="host-body">
             <h3 class="host-name">Hani Buskila</h3>
