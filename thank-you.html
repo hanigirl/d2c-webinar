@@ -119,25 +119,6 @@
 
     .ty-hero > * { position: relative; z-index: 1; }
 
-    .ty-check {
-      width: 88px; height: 88px;
-      border-radius: 50%;
-      background: rgba(123, 237, 82, 0.12);
-      border: 2px solid var(--green);
-      display: grid;
-      place-items: center;
-      margin: 0 auto 32px;
-      animation: pop 0.6s var(--ease) both;
-    }
-
-    @keyframes pop {
-      0%   { transform: scale(0.4); opacity: 0; }
-      60%  { transform: scale(1.08); opacity: 1; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    @media (prefers-reduced-motion: reduce) { .ty-check { animation: none; } }
-
     h1.ty-title {
       font-size: 62px;
       font-weight: 700;
@@ -305,17 +286,36 @@
 
     .cal-btn:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
 
-    .cal-btn.is-primary {
-      background: var(--pink);
-      border-color: var(--pink);
-      box-shadow: 0 12px 36px rgba(255, 43, 155, 0.28);
+    .cal-btn.is-google {
+      background: #fff;
+      border-color: #fff;
+      color: #111;
+      box-shadow: 0 12px 36px rgba(255, 255, 255, 0.16);
     }
 
-    .cal-btn.is-primary:hover { background: #ff45a8; }
+    .cal-btn.is-google:hover {
+      background: #fff;
+      border-color: #fff;
+      box-shadow: 0 14px 40px rgba(255, 255, 255, 0.26);
+    }
+
+    .cal-btn.is-whatsapp {
+      background: #25D366;
+      border-color: #25D366;
+      color: #06301a;
+      box-shadow: 0 12px 36px rgba(37, 211, 102, 0.28);
+    }
+
+    .cal-btn.is-whatsapp:hover {
+      background: #2ee878;
+      border-color: #2ee878;
+      box-shadow: 0 14px 40px rgba(37, 211, 102, 0.38);
+    }
 
     /* Countdown */
     .countdown {
       display: flex;
+      direction: ltr;
       gap: 10px;
       justify-content: center;
       margin-top: 34px;
@@ -560,7 +560,6 @@
     @media (max-width: 600px) {
       .wrap { padding-inline: 20px; }
       .ty-hero { padding: 80px 20px 56px; }
-      .ty-check { width: 68px; height: 68px; margin-bottom: 24px; }
       h1.ty-title { font-size: 36px; }
       .ty-sub { font-size: 22px; }
       .ty-video-block { padding: 12px 20px 64px; }
@@ -590,13 +589,6 @@
 
   <!-- ═══════════════════ HERO ═══════════════════ -->
   <header class="ty-hero">
-    <div class="ty-check" aria-hidden="true">
-      <svg width="42" height="42" viewBox="0 0 24 24" fill="none">
-        <path d="M4 12.5l5.2 5.2L20 7" stroke="#7bed52" stroke-width="2.6"
-              stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-    </div>
-
     <h1 class="ty-title">יש, עשית את זה!</h1>
 
     <p class="ty-sub">
@@ -633,11 +625,11 @@
   <!-- ═══════════════════ NEXT STEP ═══════════════════ -->
   <section class="ty-step">
     <div class="wrap">
-      <span class="step-kicker reveal">One small thing</span>
+      <span class="step-kicker reveal">Two small things</span>
 
       <h2 class="reveal">
         אנחנו שומרים לך מקום מיוחד בלייב.<br />
-        <span class="underline">בינתיים</span> הנה דבר אחד קטן שחשוב לעשות:
+        <span class="underline">בינתיים</span> הנה שני דברים קטנים שחשוב לעשות:
       </h2>
 
       <div class="date-card reveal">
@@ -648,23 +640,31 @@
         <p class="date-note">שריינו את זה ביומן עכשיו, כדי שלא תפספסו.</p>
 
         <div class="cal-buttons">
-          <a class="cal-btn is-primary" id="btnGoogle" href="#" target="_blank" rel="noopener">
-            <svg width="19" height="19" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <rect x="1.5" y="2.8" width="13" height="11.7" rx="2" stroke="currentColor" stroke-width="1.4"/>
-              <path d="M1.5 6.3h13M5 1.5v2.6M11 1.5v2.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <a class="cal-btn is-google" id="btnGoogle" href="#" target="_blank" rel="noopener">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M17.4 6.6H6.6v10.8h10.8z"/>
+              <path fill="#EA4335" d="M17.4 24 24 17.4h-6.6z"/>
+              <path fill="#FBBC04" d="M24 6.6h-6.6v10.8H24z"/>
+              <path fill="#34A853" d="M17.4 17.4H6.6V24h10.8z"/>
+              <path fill="#188038" d="M0 17.4V22a2 2 0 0 0 2 2h4.6v-6.6z"/>
+              <path fill="#1967D2" d="M24 6.6V2a2 2 0 0 0-2-2h-4.6v6.6z"/>
+              <path fill="#4285F4" d="M17.4 0H2a2 2 0 0 0-2 2v4.6h17.4z"/>
+              <path fill="#4285F4" d="M0 6.6h6.6v10.8H0z"/>
+              <text x="12" y="15.4" text-anchor="middle" fill="#1A73E8"
+                    font-family="Roboto, Arial, Helvetica, sans-serif"
+                    font-size="9.2" font-weight="700" letter-spacing="-0.4">31</text>
             </svg>
             הוספה ל-Google Calendar
           </a>
 
-          <button class="cal-btn" id="btnIcs" type="button">
-            <svg width="19" height="19" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M8 1.8v8.4M4.8 7.4L8 10.6l3.2-3.2" stroke="currentColor" stroke-width="1.4"
-                    stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M2.2 12.2v1.2a1 1 0 001 1h9.6a1 1 0 001-1v-1.2" stroke="currentColor" stroke-width="1.4"
-                    stroke-linecap="round"/>
+          <a class="cal-btn is-whatsapp" id="btnWhatsapp"
+             href="https://chat.whatsapp.com/EKhg88xNKyIE2K82UTLBW6?mode=gi_t"
+             target="_blank" rel="noopener">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.85 9.85 0 0 0 12.04 2zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23zm4.52-6.17c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.15.16-.29.18-.53.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.44.13-.15.17-.25.25-.41.09-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.17 0-.43.06-.66.31-.22.25-.87.85-.87 2.07 0 1.22.89 2.4 1.02 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.11-.22-.17-.47-.29z"/>
             </svg>
-            Apple / Outlook
-          </button>
+            לקבוצת ה-WhatsApp
+          </a>
         </div>
 
         <div class="countdown" id="countdown" hidden>
@@ -960,7 +960,7 @@
     ═══════════════════════════════════════════════ */
     var WEBINAR = {
       title:    'משדר לייב — Design to Code',
-      start:    '2026-09-01T20:00:00+03:00',   // TODO: התאריך והשעה האמיתיים
+      start:    '2026-09-02T19:30:00+03:00',
       minutes:  60,
       location: 'זום — הקישור יישלח למייל לפני השידור',
       details:  'משדר לייב מיוחד למעצבי מוצר: איך לעלות עם הקוד החי הראשון שלך תוך 60 דקות.'
@@ -995,40 +995,6 @@
         '&dates='    + stamp(start) + '/' + stamp(end) +
         '&details='  + encodeURIComponent(WEBINAR.details) +
         '&location=' + encodeURIComponent(WEBINAR.location);
-
-      // ── .ics download for Apple Calendar / Outlook ──
-      document.getElementById('btnIcs').addEventListener('click', function () {
-        var ics = [
-          'BEGIN:VCALENDAR',
-          'VERSION:2.0',
-          'PRODID:-//Design to Code//Webinar//HE',
-          'CALSCALE:GREGORIAN',
-          'BEGIN:VEVENT',
-          'UID:' + stamp(start) + '-d2c-webinar',
-          'DTSTAMP:' + stamp(new Date()),
-          'DTSTART:' + stamp(start),
-          'DTEND:'   + stamp(end),
-          'SUMMARY:'     + WEBINAR.title,
-          'DESCRIPTION:' + WEBINAR.details,
-          'LOCATION:'    + WEBINAR.location,
-          'BEGIN:VALARM',
-          'TRIGGER:-PT30M',
-          'ACTION:DISPLAY',
-          'DESCRIPTION:' + WEBINAR.title,
-          'END:VALARM',
-          'END:VEVENT',
-          'END:VCALENDAR'
-        ].join('\r\n');
-
-        var url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = 'design-to-code-webinar.ics';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-      });
 
       // ── Countdown ──
       var cd = document.getElementById('countdown');
