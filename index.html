@@ -610,7 +610,7 @@
     }
 
     .learn-card h3 {
-      font-size: 29px;
+      font-size: 35px;
       font-weight: 700;
       line-height: 1.15;
       letter-spacing: -0.015em;
@@ -1074,6 +1074,19 @@
     }
 
     .form-card .cta { width: 100%; margin-top: 10px; }
+    .form-status {
+      margin: 0 0 1rem;
+      padding: .75rem 1rem;
+      border-radius: .5rem;
+      background: rgba(255, 68, 108, .12);
+      border: 1px solid rgba(255, 68, 108, .45);
+      color: #ff9ab4;
+      font-size: .95rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .form-status[hidden] { display: none; }
+
 
     .form-legal {
       font-size: 18px;
@@ -1167,7 +1180,7 @@
       .cta { font-size: 25px; padding: 14px 34px 11px; }
       .promise p { font-size: 24px; }
       .learn-card { padding: 28px 24px 32px; }
-      .learn-card h3 { font-size: 26px; }
+      .learn-card h3 { font-size: 31px; }
       .learn-card p, .host p { font-size: 20px; }
       .learn-closer { margin-top: 64px; margin-bottom: 8px; margin-inline: -20px; }
       .for-item { font-size: 21px; padding: 20px; }
@@ -1377,7 +1390,6 @@
     <div class="wrap">
       <span class="eyebrow reveal">The agenda</span>
       <h2 class="section-title reveal">מה תלמדו במפגש?</h2>
-      <p class="section-lead reveal">שלושה שלבים — מהבנת הבעיה ועד מפת הדרכים המלאה.</p>
 
       <div class="learn-grid">
         <article class="learn-card reveal">
@@ -1651,6 +1663,8 @@
                  autocomplete="tel" dir="ltr" style="text-align: right;"
                  pattern="[0-9\-\+\s\(\)]{9,15}" required />
         </div>
+
+        <p class="form-status" id="formStatus" role="alert" hidden></p>
 
         <button type="submit" class="cta">שריינו לי מקום במשדר</button>
 
@@ -2122,13 +2136,87 @@
         el.addEventListener('blur', function () { localize(el); });
       });
 
-      form.addEventListener('submit', function (e) {
-        fields.forEach(localize);            // messages set before the bubble shows
-        if (!form.reportValidity()) { e.preventDefault(); return; }
-        if (form.getAttribute('action')) return;   // real endpoint — let it post
+      // ── Brevo submission ──
+      // This page is static (GitHub Pages), so it must NEVER hold the
+      // xkeysib- API key: everything here is downloadable by every visitor,
+      // and that key can read the whole contact database and spend send
+      // credits. The Marketing Automation tracker key below is a different
+      // credential — write-only, meant to be published, and useless for
+      // reading data. Brevo's /p endpoint answers CORS preflight with
+      // `Access-Control-Allow-Origin: *`, so we post to it directly and skip
+      // loading Brevo's sa.js tracker: one less third-party script, and one
+      // less thing for an ad blocker to break silently.
+      var BREVO_ENDPOINT = 'https://in-automate.brevo.com/p';
+      var BREVO_MA_KEY   = 'qf7rdj4riqquwibatd3zgawd';
+      var CAMPAIGN       = '2026-09-webinar';
 
+      // Never send the SMS attribute — Brevo validates it server-side and a
+      // rejected number returns 400, which discards the whole registration.
+      // The phone goes into the plain-text PHONE attribute instead.
+
+      // Brevo requires a stable visitor id (sa.js keeps one in a cookie).
+      function visitorId() {
+        var STORE = 'd2c_cuid';
+        try {
+          var saved = localStorage.getItem(STORE);
+          if (saved) return saved;
+        } catch (err) { /* private mode — fall through to a throwaway id */ }
+
+        var id = (window.crypto && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+              var r = Math.random() * 16 | 0;
+              return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+
+        try { localStorage.setItem(STORE, id); } catch (err) {}
+        return id;
+      }
+
+      var status = document.getElementById('formStatus');
+      var button = form.querySelector('button[type="submit"]');
+      var buttonLabel = button.textContent;
+
+      form.addEventListener('submit', function (e) {
         e.preventDefault();
-        window.location.href = form.dataset.redirect;
+        fields.forEach(localize);            // messages set before the bubble shows
+        if (!form.reportValidity()) return;
+
+        status.hidden = true;
+        button.disabled = true;
+        button.textContent = 'רגע, שומרים לכם מקום…';
+
+        var full = form.fullname.value.trim().replace(/\s+/g, ' ');
+        var parts = full.split(' ');
+
+        fetch(BREVO_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+          body: JSON.stringify({
+            sib_type: 'identify',
+            key: BREVO_MA_KEY,
+            cuid: visitorId(),
+            email_id: form.email.value.trim(),
+            contact: {
+              FIRSTNAME:   parts[0],
+              LASTNAME:    parts.slice(1).join(' '),
+              FULL_NAME:   full,
+              PHONE:       form.phone.value.trim(),
+              D2C_WEBINAR: CAMPAIGN
+            }
+          })
+        }).then(function (res) {
+          if (!res.ok) throw new Error('Brevo responded ' + res.status);
+          window.location.href = form.dataset.redirect;
+        }).catch(function () {
+          // Never drop a lead silently — an ad blocker or a dead connection
+          // lands here, so say so and leave the filled-in form intact.
+          button.disabled = false;
+          button.textContent = buttonLabel;
+          status.textContent = 'לא הצלחנו לשמור את ההרשמה. בדקו את החיבור לאינטרנט ונסו שוב, ' +
+                               'או שלחו לנו מייל ל-hani@uxtra.co.il ונרשום אתכם ידנית.';
+          status.hidden = false;
+        });
       });
     })();
 
