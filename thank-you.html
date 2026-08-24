@@ -98,7 +98,9 @@
        HERO — "יש עשית את זה!"
     ═══════════════════════════════════════════════ */
     .ty-hero {
-      padding: 120px 32px 80px;
+      /* No bottom padding: the heading below is meant to sit right under the
+         title, and the gap between them is set once, on .ty-step. */
+      padding: 120px 32px 0;
       position: relative;
       overflow: hidden;
       text-align: center;
@@ -124,7 +126,6 @@
       font-weight: 700;
       line-height: 1.05;
       letter-spacing: -0.025em;
-      margin-bottom: 24px;
     }
 
     /* ═══════════════════════════════════════════════
@@ -132,12 +133,13 @@
     ═══════════════════════════════════════════════ */
     .ty-step {
       background: linear-gradient(180deg, rgba(255,255,255,0.025), transparent);
-      padding-block: 100px;
+      padding-top: 16px;
+      padding-bottom: 100px;
     }
 
     .ty-step h2 {
       font-size: 36px;
-      font-weight: 700;
+      font-weight: 400;
       line-height: 1.2;
       letter-spacing: -0.02em;
       max-width: 34ch;
@@ -170,7 +172,7 @@
 
     .date-note {
       font-size: 21px;
-      color: var(--faint);
+      color: var(--text);
       margin-bottom: 30px;
     }
 
@@ -477,9 +479,9 @@
 
     @media (max-width: 600px) {
       .wrap { padding-inline: 20px; }
-      .ty-hero { padding: 80px 20px 56px; }
+      .ty-hero { padding: 80px 20px 0; }
       h1.ty-title { font-size: 36px; }
-      .ty-step { padding-block: 68px; }
+      .ty-step { padding-top: 16px; padding-bottom: 68px; }
       .ty-step h2 { font-size: 25px; }
       .date-card { padding: 28px 22px; }
       .date-line { font-size: 24px; }
@@ -522,7 +524,7 @@
           הלייב יתקיים ביום <span class="hl-yellow" id="calDay">—</span>
           בשעה <span class="hl-yellow" id="calTime">—</span> בדיוק
         </p>
-        <p class="date-note">שריינו את זה ביומן עכשיו, כדי שלא תפספסו.</p>
+        <p class="date-note">שריינו את זה ביומן עכשיו, כדי שלא תפספסו, והצטרפו לקבוצת הוואטסאפ השקטה.</p>
 
         <div class="cal-buttons">
           <a class="cal-btn is-google" id="btnGoogle" href="#" target="_blank" rel="noopener">
