@@ -18,6 +18,12 @@
       font-weight: 400; font-style: normal; font-display: swap;
     }
     @font-face {
+      font-family: 'Berkowitz Hand';
+      src: url('fonts/OHEyalMeirBerkowitz-Regular.woff2') format('woff2'),
+           url('fonts/OHEyalMeirBerkowitz-Regular.woff') format('woff');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
       font-family: 'Almoni Tzar';
       src: url('fonts/almoni-tzar-regular-aaa.otf') format('opentype');
       font-weight: 400; font-style: normal; font-display: swap;
@@ -134,7 +140,8 @@
     .ty-step {
       background: linear-gradient(180deg, rgba(255,255,255,0.025), transparent);
       padding-top: 16px;
-      padding-bottom: 100px;
+      /* The gap to the next section is set once, on .ty-social. */
+      padding-bottom: 0;
     }
 
     .ty-step h2 {
@@ -142,7 +149,9 @@
       font-weight: 400;
       line-height: 1.2;
       letter-spacing: -0.02em;
-      max-width: 34ch;
+      /* The first authored line measures 38ch; anything tighter drops
+         "הקריירה." onto a line of its own. */
+      max-width: 40ch;
       margin: 0 auto 14px;
     }
 
@@ -267,7 +276,7 @@
     /* ═══════════════════════════════════════════════
        TESTIMONIALS
     ═══════════════════════════════════════════════ */
-    .ty-social { padding-block: 110px; }
+    .ty-social { padding-top: 24px; padding-bottom: 110px; }
     .ty-social .wrap { max-width: 1180px; }
 
     .ty-social h2 {
@@ -381,34 +390,17 @@
 
     .signoff-text {
       font-size: 30px;
-      color: var(--muted);
-      margin-bottom: 28px;
+      color: var(--text);
+      margin-bottom: 10px;
     }
 
+    /* Set in the same hand as the questions on the landing page, so the page
+       closes on something that reads as a signature. */
     .signoff-names {
-      display: flex;
-      gap: 32px;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .signoff-person {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .signoff-person img {
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--pink);
-    }
-
-    .signoff-person span {
-      font-size: 26px;
-      font-weight: 500;
+      font-family: 'Berkowitz Hand', 'Almoni Tzar', sans-serif;
+      font-size: 48px;
+      line-height: 1.25;
+      color: var(--text);
     }
 
     /* ═══════════════════════════════════════════════
@@ -453,17 +445,20 @@
       overflow: hidden;
     }
 
+    /* Same shape language as the pixel field on the landing page — small
+       rectangles, some outlined — so this reads as those pixels coming down
+       rather than as party confetti. Size and colour are set per piece. */
     .confetti i {
       position: absolute;
       top: -12vh;
-      width: 9px; height: 14px;
+      border-radius: 1px;
       opacity: 0;
       animation: fall linear forwards;
     }
 
     @keyframes fall {
-      0%   { opacity: 1; transform: translateY(0) rotate(0deg); }
-      100% { opacity: 0; transform: translateY(112vh) rotate(720deg); }
+      0%   { opacity: var(--op, 1); transform: translate(0, 0) rotate(0deg); }
+      100% { opacity: 0; transform: translate(var(--drift, 0px), 112vh) rotate(var(--spin, 180deg)); }
     }
 
     /* ═══════════════════════════════════════════════
@@ -481,14 +476,14 @@
       .wrap { padding-inline: 20px; }
       .ty-hero { padding: 80px 20px 0; }
       h1.ty-title { font-size: 36px; }
-      .ty-step { padding-top: 16px; padding-bottom: 68px; }
+      .ty-step { padding-top: 16px; padding-bottom: 0; }
       .ty-step h2 { font-size: 25px; }
       .date-card { padding: 28px 22px; }
       .date-line { font-size: 24px; }
       .cal-btn { font-size: 20px; padding: 12px 20px 9px; }
       .cd-unit { min-width: 66px; }
       .cd-num { font-size: 26px; }
-      .ty-social { padding-block: 72px; }
+      .ty-social { padding-top: 24px; padding-bottom: 72px; }
       .ty-social h2 { font-size: 26px; margin-bottom: 36px; }
       .wall { height: 480px; gap: 14px; }
       .wall-col { gap: 14px; }
@@ -496,8 +491,7 @@
       .quote { padding: 22px 20px; }
       .quote p { font-size: 19px; }
       .signoff-text { font-size: 24px; }
-      .signoff-names { gap: 20px; }
-      .signoff-person span { font-size: 22px; }
+      .signoff-names { font-size: 38px; }
     }
   </style>
 </head>
@@ -821,16 +815,7 @@
   <section class="ty-signoff">
     <div class="wrap">
       <p class="signoff-text reveal">ניפגש בקרוב,</p>
-      <div class="signoff-names reveal">
-        <span class="signoff-person">
-          <img src="assets/daniel.png" alt="" loading="lazy" />
-          <span>דניאל</span>
-        </span>
-        <span class="signoff-person">
-          <img src="assets/hani-new.png" alt="" loading="lazy" />
-          <span>חני</span>
-        </span>
-      </div>
+      <p class="signoff-names reveal">חני ודניאל</p>
     </div>
   </section>
 
@@ -932,15 +917,23 @@
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
       var host = document.getElementById('confetti');
-      var colors = ['#ff2b9b', '#ffc937', '#7bed52', '#ffffff'];
+      // The landing page's pixel palette, so the same specks land here.
+      var colors = ['#ff7ac4', '#8f6bff', '#ff2b9b', '#7b5cff', '#c04cff', '#ffffff'];
 
-      for (var i = 0; i < 70; i++) {
+      for (var i = 0; i < 90; i++) {
         var bit = document.createElement('i');
+        var c = colors[Math.floor(Math.random() * colors.length)];
         bit.style.left = (Math.random() * 100) + 'vw';
-        bit.style.background = colors[i % colors.length];
-        bit.style.animationDuration = (2.6 + Math.random() * 2.2) + 's';
-        bit.style.animationDelay = (Math.random() * 1.2) + 's';
-        if (i % 3 === 0) bit.style.borderRadius = '50%';
+        bit.style.width = (3 + Math.floor(Math.random() * 7)) + 'px';
+        bit.style.height = (3 + Math.floor(Math.random() * 7)) + 'px';
+        // A little over a quarter are drawn as outlines, as in the field above.
+        if (Math.random() < 0.28) bit.style.border = '1px solid ' + c;
+        else bit.style.background = c;
+        bit.style.setProperty('--drift', (Math.random() * 120 - 60).toFixed(0) + 'px');
+        bit.style.setProperty('--spin', (90 + Math.random() * 270).toFixed(0) + 'deg');
+        bit.style.setProperty('--op', (0.35 + Math.random() * 0.55).toFixed(2));
+        bit.style.animationDuration = (2.8 + Math.random() * 2.4) + 's';
+        bit.style.animationDelay = (Math.random() * 1.4) + 's';
         host.appendChild(bit);
       }
 
