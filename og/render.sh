@@ -37,4 +37,10 @@ PY
 }
 
 shoot cover.html     1200  630 assets/og-cover.jpg
+
+# Instagram carousel, in order. Slide 4 is instagram.html — it doubles as the
+# standalone feed post.
+shoot slide-1.html   1080 1080 og/instagram-slide-1.jpg
+shoot slide-2.html   1080 1080 og/instagram-slide-2.jpg
+shoot slide-3.html   1080 1080 og/instagram-slide-3.jpg
 shoot instagram.html 1080 1080 og/instagram-post.jpg
