@@ -9,13 +9,26 @@
   <link rel="canonical" href="https://uxtra.co.il/lives/design-to-code/" />
 
   <!-- Open Graph. These have to be absolute — a relative og:image is ignored
-       by every scraper, so link previews would come back blank. -->
+       by every scraper, so link previews would come back blank. The card is
+       built from og/cover.html; re-render it with og/render.sh. -->
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="he_IL" />
+  <meta property="og:site_name" content="UXTRA" />
   <meta property="og:url" content="https://uxtra.co.il/lives/design-to-code/" />
   <meta property="og:title" content="משדר לייב למעצבי מוצר — Design to Code" />
   <meta property="og:description" content="איך לפרוץ כמעצב של העולם החדש, להעלות קוד חי ראשון תוך 60 דקות, ולהפוך לנכס הכי חזק בצוות." />
-  <meta property="og:image" content="https://uxtra.co.il/lives/design-to-code/assets/logo-d2c.png" />
+  <meta property="og:image" content="https://uxtra.co.il/lives/design-to-code/assets/og-cover.jpg" />
+  <!-- LinkedIn and Facebook lay out the card before the image loads; without
+       the dimensions the first share of a fresh URL renders as a small tile. -->
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:alt" content="חני בוסקילה ודניאל בוארון — משדר לייב, יום רביעי 2.9 בשעה 19:30" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="משדר לייב למעצבי מוצר — Design to Code" />
+  <meta name="twitter:description" content="איך לפרוץ כמעצב של העולם החדש, להעלות קוד חי ראשון תוך 60 דקות, ולהפוך לנכס הכי חזק בצוות." />
+  <meta name="twitter:image" content="https://uxtra.co.il/lives/design-to-code/assets/og-cover.jpg" />
 
   <link rel="icon" href="assets/logo-d2c.png" />
 
