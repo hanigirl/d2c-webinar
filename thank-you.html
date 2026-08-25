@@ -834,8 +834,14 @@
       title:    'משדר לייב — Design to Code',
       start:    '2026-09-02T19:30:00+03:00',
       minutes:  60,
-      location: 'זום — הקישור יישלח למייל לפני השידור',
-      details:  'משדר לייב מיוחד למעצבי מוצר: איך לעלות עם הקוד החי הראשון שלך תוך 60 דקות.'
+      // The join link goes in `location` so calendars surface it as the place
+      // to be, and again in `details` because not every client linkifies the
+      // location field. This is where people actually look when the reminder
+      // fires — nobody digs through email five minutes before.
+      join:     'https://us06web.zoom.us/j/84400772397?pwd=6QPbz71DQ9twbjVnaAAgNRSGFohYsV.1',
+      location: 'https://us06web.zoom.us/j/84400772397?pwd=6QPbz71DQ9twbjVnaAAgNRSGFohYsV.1',
+      details:  'משדר לייב מיוחד למעצבי מוצר: איך לעלות עם הקוד החי הראשון שלך תוך 60 דקות.\n\n' +
+                'קישור לכניסה:\nhttps://us06web.zoom.us/j/84400772397?pwd=6QPbz71DQ9twbjVnaAAgNRSGFohYsV.1'
     };
 
     (function () {
