@@ -121,3 +121,11 @@ h1.hero { font-size: 122px; line-height: 0.96; }
   font-size: 26px;
   color: rgba(255,255,255,0.62);
 }
+
+/* The last text slide hands over to the offer, so its line carries weight
+   rather than sitting back like the other cues. */
+.cue.strong {
+  font-size: 36px;
+  font-weight: 700;
+  color: #ffffff;
+}
