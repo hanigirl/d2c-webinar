@@ -33,6 +33,11 @@ export default {
       method: request.method,
       headers: { 'accept': request.headers.get('accept') || '*/*' },
       redirect: 'follow',
+      // Never hold on to an error. A URL requested in the window between a
+      // push and the Pages deploy answers 404, and caching that pins the miss
+      // in place long after the file is live — which is how a link preview
+      // ends up permanently blank.
+      cf: { cacheTtlByStatus: { '200-299': 3600, '404': 0, '500-599': 0 } },
     });
 
     const response = new Response(upstream.body, upstream);
