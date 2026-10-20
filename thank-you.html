@@ -134,6 +134,28 @@
       letter-spacing: -0.025em;
     }
 
+    /* Intro video from Hani & Daniel, right under the title. It sits above
+       the hero glow, so it needs its own stacking context. */
+    .ty-video {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 40px auto 56px;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--card);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+    }
+
+    .ty-video video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     /* ═══════════════════════════════════════════════
        NEXT STEP — save the date
     ═══════════════════════════════════════════════ */
@@ -476,6 +498,7 @@
       .wrap { padding-inline: 20px; }
       .ty-hero { padding: 80px 20px 0; }
       h1.ty-title { font-size: 36px; }
+      .ty-video { margin: 28px auto 36px; border-radius: var(--radius-sm); }
       .ty-step { padding-top: 16px; padding-bottom: 0; }
       .ty-step h2 { font-size: 25px; }
       .date-card { padding: 28px 22px; }
@@ -503,6 +526,13 @@
   <header class="ty-hero">
     <h1 class="ty-title">יש, עשית את זה!</h1>
 
+    <div class="ty-video reveal">
+      <video controls playsinline preload="metadata"
+             poster="assets/live-intro-poster.jpg"
+             aria-label="חני ודניאל מספרים מה מחכה בלייב">
+        <source src="assets/live-intro.mp4" type="video/mp4" />
+      </video>
+    </div>
   </header>
 
   <!-- ═══════════════════ NEXT STEP ═══════════════════ -->
