@@ -27,7 +27,7 @@ The content still gets reused — it just has to live as a **template**:
 
 1. Brevo → **Campaigns → Templates → New template**.
 2. Name it `d2c-webinar · registration confirmation`.
-3. Subject: `נרשמת למשדר — נתראה ב-2.9 בשעה 19:30`
+3. Subject: `נרשמת למשדר — נתראה ב-1.11 בשעה 19:00`
 4. Design step → **Code your own → Paste your code**, and paste the whole of
    `registration-confirmation.html`.
 5. Save and **activate** the template. An inactive template cannot be sent.
