@@ -2264,14 +2264,44 @@
           campaign:  CAMPAIGN
         });
 
-        fetch(MAKE_WEBHOOK, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-          body: body.toString()
-        }).then(function (res) {
-          if (!res.ok) throw new Error('Make responded ' + res.status);
+        // On 27.10 Brevo hung for 25s at a time and Make passed the failure
+        // back, so people stared at "שומרים…" and then got an error. Each try
+        // now has a hard deadline, a failed try is retried once on its own,
+        // and the button says so instead of looking frozen.
+        var ATTEMPT_MS = 30000;
+        var slow = setTimeout(function () {
+          button.textContent = 'עוד רגע, ממשיכים לשמור…';
+        }, 8000);
+
+        function send(attempt) {
+          var ctrl = 'AbortController' in window ? new AbortController() : null;
+          var timer = ctrl && setTimeout(function () { ctrl.abort(); }, ATTEMPT_MS);
+
+          return fetch(MAKE_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+            body: body.toString(),
+            signal: ctrl ? ctrl.signal : undefined
+          }).then(function (res) {
+            clearTimeout(timer);
+            if (!res.ok) throw new Error('Make responded ' + res.status);
+          }, function (err) {
+            clearTimeout(timer);
+            throw err;
+          }).catch(function (err) {
+            if (attempt > 1) throw err;
+            return new Promise(function (r) { setTimeout(r, 1500); })
+              .then(function () { return send(attempt + 1); });
+          });
+        }
+
+        send(1).then(function () {
+          clearTimeout(slow);
           window.location.href = form.dataset.redirect;
-        }).catch(failed);
+        }).catch(function () {
+          clearTimeout(slow);
+          failed();
+        });
       });
     })();
 
